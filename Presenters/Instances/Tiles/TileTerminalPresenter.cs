@@ -1,4 +1,4 @@
-using Parameters.Interfaces;
+using Interfaces;
 using UniRx;
 using Views.Instances.Tiles;
 
@@ -11,17 +11,17 @@ namespace Presenters.Instances.Tiles
             tileTerminalModel.OnChangedRotateStatus.Subscribe(rotateStatus =>
             {
                 tileTerminal.SetRotateStatus(rotateStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileTerminalModel.OnChangedElectricStatusLine.Subscribe(electricStatus =>
             {
                 tileTerminal.SetElectricStatusLine(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileTerminalModel.OnChangedElectricStatusTerminalSymbol.Subscribe(electricStatus =>
             {
                 tileTerminal.SetElectricStatusTerminalSymbol(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
         }
     }
 }

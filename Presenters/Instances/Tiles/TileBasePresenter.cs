@@ -4,10 +4,10 @@ namespace Presenters.Instances.Tiles
 {
     public abstract class TileBasePresenter
     {
-        protected readonly CompositeDisposable CompositeDisposable = new();
+        protected readonly CompositeDisposable compositeDisposable = new();
         public void CompositeDispose()
         {
-            CompositeDisposable.Dispose();
+            compositeDisposable.Dispose();
         }
     }
 }

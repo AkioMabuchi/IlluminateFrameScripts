@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
 
 namespace Models.Instances.Tiles
@@ -32,6 +32,11 @@ namespace Models.Instances.Tiles
         protected override List<ConductOutput> ConductSub(ElectricStatus electricStatus, LineDirection lineDirection)
         {
             var outputs = new List<ConductOutput>();
+            var score = 0;
+            if (_reactivePropertyElectricStatusLine.Value == ElectricStatus.None)
+            {
+                score = 10;
+            }
             switch (lineDirection)
             {
                 case LineDirection.Down:
@@ -39,7 +44,8 @@ namespace Models.Instances.Tiles
                     _reactivePropertyElectricStatusLine.Value = electricStatus;
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        score = score,
+                        lineDirection = LineDirection.Right
                     });
                     break;
                 }
@@ -48,7 +54,8 @@ namespace Models.Instances.Tiles
                     _reactivePropertyElectricStatusLine.Value = electricStatus;
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     break;
                 }

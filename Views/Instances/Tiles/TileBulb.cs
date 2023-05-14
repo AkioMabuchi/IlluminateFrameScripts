@@ -1,7 +1,8 @@
-using Parameters.Enums;
-using Parameters.ScriptableObjects;
+using Enums;
+using ScriptableObjects;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Views.Instances.Tiles
 {
@@ -9,16 +10,24 @@ namespace Views.Instances.Tiles
     {
         [SerializeField] private MeshRenderer meshRendererLine;
         [SerializeField] private MeshRenderer meshRendererBulb;
-        [SerializeField] private ScriptableObjectElectricMaterials electricMaterials;
-        
+        [SerializeField] private ScriptableObjectElectricMaterials electricMaterialsLine;
+        [SerializeField] private ScriptableObjectElectricMaterials electricMaterialsBulb;
         private ElectricStatus _electricStatusLine = ElectricStatus.None;
         private ElectricStatus _electricStatusBulb = ElectricStatus.None;
-        
+
+        private void Awake()
+        {
+            this.UpdateAsObservable()
+                .Subscribe(_ =>
+                {
+                    meshRendererLine.material = electricMaterialsLine.GetMaterialElectric(_electricStatusLine);
+                    meshRendererBulb.material = electricMaterialsBulb.GetMaterialElectric(_electricStatusBulb);
+                }).AddTo(gameObject);
+        }
+
         public void SetElectricStatusLine(ElectricStatus electricStatus)
         {
             _electricStatusLine = electricStatus;
-
-            meshRendererLine.material = electricMaterials.GetMaterialElectric(_electricStatusLine);
         }
 
         public void SetElectricStatusBulb(ElectricStatus electricStatus)

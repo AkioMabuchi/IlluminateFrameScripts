@@ -1,5 +1,4 @@
-using Models.Instances.Tiles;
-using Parameters.Interfaces;
+using Interfaces;
 using UniRx;
 using Views.Instances.Tiles;
 
@@ -12,17 +11,17 @@ namespace Presenters.Instances.Tiles
             tilePowerMinusModel.OnChangedRotateStatus.Subscribe(rotateStatus =>
             {
                 tilePower1.SetRotateStatus(rotateStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tilePowerMinusModel.OnChangedElectricStatusLine.Subscribe(electricStatus =>
             {
                 tilePower1.SetElectricStatusLine(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tilePowerMinusModel.OnChangedElectricStatusPowerSymbol.Subscribe(electricStatus =>
             {
                 tilePower1.SetElectricStatusPowerSymbol(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
         }
     }
 }

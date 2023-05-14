@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
 
 namespace Models.Instances.Tiles
@@ -19,6 +19,18 @@ namespace Models.Instances.Tiles
 
         public IObservable<ElectricStatus> OnChangedElectricStatusTerminalSymbol =>
             _reactivePropertyElectricStatusTerminalSymbol;
+
+        public TerminalElectricStatus GetTerminalElectricStatus(ElectricStatus electricStatus)
+        {
+            return electricStatus switch
+            {
+                ElectricStatus.Normal => TerminalElectricStatus.Different,
+                ElectricStatus.Plus => TerminalElectricStatus.Different,
+                ElectricStatus.Minus => TerminalElectricStatus.Correct,
+                ElectricStatus.Alternating => TerminalElectricStatus.Different,
+                _ => TerminalElectricStatus.None
+            };
+        }
 
         public override TileType TileType => TileType.TerminalMinus;
 
@@ -47,7 +59,7 @@ namespace Models.Instances.Tiles
                         _reactivePropertyElectricStatusLine.Value = electricStatus;
                         outputs.Add(new ConductOutput
                         {
-                            TerminalType = TerminalType.Minus
+                            terminalType = TerminalType.Minus
                         });
                     }
 

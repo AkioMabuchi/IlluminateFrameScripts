@@ -1,12 +1,11 @@
-using System;
 using System.Collections.Generic;
+using Classes.Statics;
 using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
+using Enums;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
 using Views.Instances.Tiles;
 
 namespace Views
@@ -30,9 +29,18 @@ namespace Views
         [SerializeField] private TileTerminal prefabTileTerminalMinus;
         [SerializeField] private TileTerminal prefabTileTerminalAlternatingL;
         [SerializeField] private TileTerminal prefabTileTerminalAlternatingR;
-        
-        [SerializeField] private Vector3 generatePosition; 
-        [SerializeField] private Vector3 nextTilePosition;
+
+        [SerializeField] private Vector3 generatePositionSmall;
+        [SerializeField] private Vector3 generatePositionMedium;
+        [SerializeField] private Vector3 generatePositionLarge;
+
+        [SerializeField] private Vector3 nextTilePositionSmall;
+        [SerializeField] private Vector3 nextTilePositionMedium;
+        [SerializeField] private Vector3 nextTilePositionLarge;
+
+        [SerializeField] private Vector3 boardBasePositionSmall;
+        [SerializeField] private Vector3 boardBasePositionMedium;
+        [SerializeField] private Vector3 boardBasePositionLarge;
 
         [SerializeField] private float durationCurrentTile;
         [SerializeField] private float durationNextTile;
@@ -41,17 +49,19 @@ namespace Views
 
         private int? _currentTileId;
         private int? _nextTileId;
-
-        private Vector3 _baseTilePosition;
-        private Vector3 _currentTilePosition;
         
+        private Vector3 _generatePosition = Vector3.zero;
+        private Vector3 _nextTilePosition = Vector3.zero;
+        private Vector3 _baseTilePosition = Vector3.zero;
+        private Vector3 _currentTilePosition = Vector3.zero;
+        private Vector3 _boardBasePosition = Vector3.zero;
+
         private float _currentTileLerpValue;
         private float _nextTileLerpValue;
-
+        
         private Tweener _tweenerCurrentTileLerp;
         private Tweener _tweenerNextTile;
-
-        private readonly float _mainBoardHeight = 0.01f;
+        
         private void Awake()
         {
             this.UpdateAsObservable()
@@ -65,6 +75,20 @@ namespace Views
                             tile.transform.position = Vector3.Lerp(_baseTilePosition, _currentTilePosition,
                                 _currentTileLerpValue);
                         }
+                    }
+                }).AddTo(gameObject);
+
+            this.UpdateAsObservable()
+                .Subscribe(_ =>
+                {
+                    if (Keyboard.current == null)
+                    {
+                        return;
+                    }
+
+                    if (Keyboard.current.tKey.wasPressedThisFrame)
+                    {
+                        ThrowNextTile();
                     }
                 }).AddTo(gameObject);
         }
@@ -94,122 +118,156 @@ namespace Views
         {
             _currentTilePosition = currentTilePosition;
         }
+        
+
+        public void SetGeneratePosition(FrameSize frameSize)
+        {
+            _generatePosition = frameSize switch
+            {
+                FrameSize.Small => generatePositionSmall,
+                FrameSize.Medium => generatePositionMedium,
+                FrameSize.Large => generatePositionLarge,
+                _ => Vector3.zero
+            };
+        }
+
+        public void SetNextTilePosition(FrameSize frameSize)
+        {
+            _nextTilePosition = frameSize switch
+            {
+                FrameSize.Small => nextTilePositionSmall,
+                FrameSize.Medium => nextTilePositionMedium,
+                FrameSize.Large => nextTilePositionLarge,
+                _ => Vector3.zero
+            };
+        }
+
+        public void SetBoardBasePosition(FrameSize frameSize)
+        {
+            _boardBasePosition = frameSize switch
+            {
+                FrameSize.Small => boardBasePositionSmall,
+                FrameSize.Medium => boardBasePositionMedium,
+                FrameSize.Large => boardBasePositionLarge,
+                _ => Vector3.zero
+            };
+        }
 
         public TileLine1 GenerateTileStraight(int tileId)
         {
-            var tile = Instantiate(prefabTileStraight, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileStraight, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileLine1 GenerateTileCurve(int tileId)
         {
-            var tile = Instantiate(prefabTileCurve, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileCurve, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileLine2 GenerateTileTwinCurves(int tileId)
         {
-            var tile = Instantiate(prefabTileTwinCurves, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTwinCurves, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileLine2 GenerateTileCross(int tileId)
         {
-            var tile = Instantiate(prefabTileCross, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileCross, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileDistributor3 GenerateTileDistributor3(int tileId)
         {
-            var tile = Instantiate(prefabTileDistributor3, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileDistributor3, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileDistributor4 GenerateTileDistributor4(int tileId)
         {
-            var tile = Instantiate(prefabTileDistributor4, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileDistributor4, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileBulb GenerateTileBulb(int tileId)
         {
-            var tile = Instantiate(prefabTileBulb, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileBulb, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TilePower2 GenerateTilePowerNormal(int tileId)
         {
-            var tile = Instantiate(prefabTilePowerNormal, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTilePowerNormal, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TilePower1 GenerateTilePowerPlus(int tileId)
         {
-            var tile = Instantiate(prefabTilePowerPlus, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTilePowerPlus, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TilePower1 GenerateTilePowerMinus(int tileId)
         {
-            var tile = Instantiate(prefabTilePowerMinus, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTilePowerMinus, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TilePower2 GenerateTilePowerAlternating(int tileId)
         {
-            var tile = Instantiate(prefabTilePowerAlternating, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTilePowerAlternating, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
 
         public TileTerminal GenerateTileTerminalNormalL(int tileId)
         {
-            var tile = Instantiate(prefabTileTerminalNormalL, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTerminalNormalL, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TileTerminal GenerateTileTerminalNormalR(int tileId)
         {
-            var tile = Instantiate(prefabTileTerminalNormalR, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTerminalNormalR, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TileTerminal GenerateTileTerminalPlus(int tileId)
         {
-            var tile = Instantiate(prefabTileTerminalPlus, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTerminalPlus, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TileTerminal GenerateTileTerminalMinus(int tileId)
         {
-            var tile = Instantiate(prefabTileTerminalMinus, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTerminalMinus, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TileTerminal GenerateTileTerminalAlternatingL(int tileId)
         {
-            var tile = Instantiate(prefabTileTerminalAlternatingL, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTerminalAlternatingL, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
         
         public TileTerminal GenerateTileTerminalAlternatingR(int tileId)
         {
-            var tile = Instantiate(prefabTileTerminalAlternatingR, generatePosition, Quaternion.identity, transform);
+            var tile = Instantiate(prefabTileTerminalAlternatingR, _generatePosition, Quaternion.identity, transform);
             _tiles.Add(tileId, tile);
             return tile;
         }
@@ -252,19 +310,33 @@ namespace Views
                 var nextTileId = _nextTileId.Value;
                 if (_tiles.TryGetValue(nextTileId, out var tile))
                 {
-                    _tweenerNextTile = tile.transform.DOMove(nextTilePosition, durationNextTile)
-                        .From(generatePosition)
+                    _tweenerNextTile = tile.transform.DOMove(_nextTilePosition, durationNextTile)
+                        .From(_generatePosition)
                         .SetEase(Ease.OutCubic)
                         .SetLink(tile.gameObject);
                 }
             }
         }
 
-        public void MoveTile(int tileId, Vector3 position)
+        public void ThrowNextTile()
+        {
+            if (_nextTileId.HasValue)
+            {
+                var nextTileId = _nextTileId.Value;
+                if (_tiles.TryGetValue(nextTileId, out var tile))
+                {
+                    tile.Throw();
+                }
+            }
+        }
+
+        public void PutTileOnBoard(int tileId, Vector2Int cellPosition)
         {
             if (_tiles.TryGetValue(tileId, out var tile))
             {
-                tile.transform.position = position;
+                tile.transform.position =
+                    new Vector3(cellPosition.x * Const.TileSize, 0.0f, cellPosition.y * Const.TileSize)
+                    + _boardBasePosition;
             }
         }
 
@@ -272,7 +344,7 @@ namespace Views
         {
             if (_tiles.TryGetValue(tileId, out var tile))
             {
-                tile.RotateTileImmediate();
+                tile.RotateImmediate();
             }
         }
 
@@ -283,7 +355,7 @@ namespace Views
                 var currentTileId = _currentTileId.Value;
                 if (_tiles.TryGetValue(currentTileId, out var tile))
                 {
-                    tile.RotateTile();
+                    tile.Rotate();
                 }
             }
         }

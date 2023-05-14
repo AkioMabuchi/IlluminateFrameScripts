@@ -1,6 +1,4 @@
 using Models;
-using Parameters.Classes.Statics;
-using Parameters.Enums;
 using UnityEngine;
 using VContainer;
 using Views;
@@ -36,16 +34,13 @@ namespace Processes
             if (_mainBoardModel.GetPutTileId(cellPosition).HasValue)
             {
                 _selectedBoardCellModel.SetSelectedPanelCellNull();
-                _boardCellPointer.SetSelected(false);
+                _boardCellPointer.EnableMeshRenderer(false);
             }
             else
             {
                 _selectedBoardCellModel.SetSelectedPanelCell(cellPosition);
-
-                var position = new Vector3(cellPosition.x * Params.TileSize, 0.01f, cellPosition.y * Params.TileSize);
-
-                _boardCellPointer.transform.position = position;
-                _boardCellPointer.SetSelected(true);
+                
+                _boardCellPointer.MoveToCellPosition(cellPosition);
 
                 if (_currentTileModel.CurrentTileId.HasValue)
                 {
@@ -53,12 +48,19 @@ namespace Processes
                     var currentTileModel = _tilesModel.GetTileModel(currentTileId);
                     var tileType = currentTileModel.TileType;
                     var rotateStatus = _tilesModel.GetTileModel(currentTileId).RotateStatus;
-                    var isValid = _validCellPositionsModel.CanPutTile(tileType, rotateStatus, cellPosition);
-                    _boardCellPointer.SetValid(isValid);
+                    if (_validCellPositionsModel.CanPutTile(tileType, rotateStatus, cellPosition))
+                    {
+                        _boardCellPointer.EnableMeshRenderer(true);
+                    }
+                    else
+                    {
+                        _boardCellPointer.EnableMeshRenderer(false);
+                    }
+
                 }
                 else
                 {
-                    _boardCellPointer.SetValid(false);
+                    _boardCellPointer.EnableMeshRenderer(false);
                 }
             }
         }
@@ -66,7 +68,7 @@ namespace Processes
         public void DeselectPanelCell()
         {
             _selectedBoardCellModel.SetSelectedPanelCellNull();
-            _boardCellPointer.SetSelected(false);
+            _boardCellPointer.EnableMeshRenderer(false);
         }
     }
 }

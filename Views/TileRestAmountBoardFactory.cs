@@ -1,7 +1,4 @@
-using System;
-using Parameters.Enums;
-using UniRx;
-using UniRx.Triggers;
+using Enums;
 using UnityEngine;
 using Views.Instances;
 
@@ -10,34 +7,25 @@ namespace Views
     public class TileRestAmountBoardFactory : MonoBehaviour
     {
         [SerializeField] private NumberDisplayBoard prefabTileRestAmountBoard;
-
+        
+        [SerializeField] private Vector3 generatePositionSmall;
+        [SerializeField] private Vector3 generatePositionMedium;
+        [SerializeField] private Vector3 generatePositionLarge;
+        
         private NumberDisplayBoard _tileRestAmountBoard;
+        public NumberDisplayBoard TileRestAmountBoard => _tileRestAmountBoard;
 
-        public void SetTileRestAmountBoardDisplayMode(NumberDisplayMode displayMode)
+        public void GenerateTileRestAmountBoard(FrameSize frameSize)
         {
-            if (_tileRestAmountBoard)
+            var position = frameSize switch
             {
-                _tileRestAmountBoard.SetDisplayMode(displayMode);
-            }
-        }
-
-        public void SetTileRestAmountBoardTileRestAmount(int tileRestAmount)
-        {
-            if (_tileRestAmountBoard)
-            {
-                _tileRestAmountBoard.SetDisplayNumber(tileRestAmount);
-            }
-        }
-
-        public void GenerateTileRestAmountBoard(PanelSize panelSize)
-        {
-            var position = panelSize switch
-            {
-                PanelSize.Large => new Vector3(-1.05f, 0.0f, 0.5f),
+                FrameSize.Small => generatePositionSmall,
+                FrameSize.Medium => generatePositionMedium,
+                FrameSize.Large => generatePositionLarge,
                 _ => Vector3.zero
             };
 
-            var rotation = panelSize switch
+            var rotation = frameSize switch
             {
                 _ => Quaternion.identity
             };

@@ -1,6 +1,5 @@
-using System;
-using UniRx;
-using UniRx.Triggers;
+using DG.Tweening;
+using Enums;
 using UnityEngine;
 
 namespace Views
@@ -10,25 +9,42 @@ namespace Views
     {
         [SerializeField] private Camera mainCamera;
 
+        [SerializeField] private Vector3 positionSmall;
+        [SerializeField] private Vector3 positionMedium;
+        [SerializeField] private Vector3 positionLarge;
+        
+        [SerializeField] private float menuRotationX;
+        [SerializeField] private float boardRotationX;
+        [SerializeField] private float durationRotateX;
+
         private void Reset()
         {
             mainCamera = GetComponent<Camera>();
         }
 
-        private void Awake()
+        public void Move(FrameSize frameSize)
         {
-            this.UpdateAsObservable()
-                .Subscribe(_ =>
-                {
-                    if (Screen.width * 9 / Screen.height < 16)
-                    {
-                        mainCamera.fieldOfView = Screen.height * 9.6f * 40.0f / 5.4f / Screen.width;
-                    }
-                    else
-                    {
-                        mainCamera.fieldOfView = 40.0f;
-                    }
-                }).AddTo(gameObject);
+            transform.position = frameSize switch
+            {
+                FrameSize.Small => positionSmall,
+                FrameSize.Medium => positionMedium,
+                FrameSize.Large => positionLarge,
+                _ => transform.position
+            };
+        }
+
+        public void LookMainBoard()
+        {
+            mainCamera.transform.DORotate(new Vector3(boardRotationX, 0.0f, 0.0f), durationRotateX)
+                .SetEase(Ease.InOutSine)
+                .SetLink(gameObject);
+        }
+
+        public void LookMenu()
+        {
+            mainCamera.transform.DORotate(new Vector3(menuRotationX, 0.0f, 0.0f), durationRotateX)
+                .SetEase(Ease.InOutSine)
+                .SetLink(gameObject);
         }
     }
 }

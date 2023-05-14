@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using Parameters.Enums;
-using UniRx;
-using UniRx.Triggers;
+using Enums;
 using UnityEngine;
 using Views.Instances;
 
@@ -11,34 +7,25 @@ namespace Views
     public class ScoreBoardFactory : MonoBehaviour
     {
         [SerializeField] private NumberDisplayBoard prefabScoreBoard;
-
+        
+        [SerializeField] private Vector3 generatePositionSmall;
+        [SerializeField] private Vector3 generatePositionMedium;
+        [SerializeField] private Vector3 generatePositionLarge;
+        
         private NumberDisplayBoard _scoreBoard;
-        
-        public void SetScoreBoardDisplayMode(NumberDisplayMode displayMode)
-        {
-            if (_scoreBoard)
-            {
-                _scoreBoard.SetDisplayMode(displayMode);
-            }
-        }
+        public NumberDisplayBoard ScoreBoard => _scoreBoard;
 
-        public void SetScoreBoardScore(int score)
+        public void GenerateScoreBoard(FrameSize frameSize)
         {
-            if (_scoreBoard)
+            var position = frameSize switch
             {
-                _scoreBoard.SetDisplayNumber(score);
-            }
-        }
-        
-        public void GenerateScoreBoard(PanelSize panelSize)
-        {
-            var position = panelSize switch
-            {
-                PanelSize.Large => new Vector3(1.05f, 0.0f, 0.5f),
+                FrameSize.Small => generatePositionSmall,
+                FrameSize.Medium => generatePositionMedium,
+                FrameSize.Large => generatePositionLarge,
                 _ => Vector3.zero
             };
 
-            var rotation = panelSize switch
+            var rotation = frameSize switch
             {
                 _ => Quaternion.identity
             };

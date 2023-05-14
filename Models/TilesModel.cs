@@ -1,6 +1,6 @@
 using System;
+using Enums;
 using Models.Instances.Tiles;
-using Parameters.Enums;
 using UniRx;
 
 namespace Models

@@ -1,7 +1,6 @@
-using Parameters.Enums;
-using Parameters.ScriptableObjects;
+using Enums;
+using ScriptableObjects;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Views.Instances.Tiles
 {

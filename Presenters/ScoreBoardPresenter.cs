@@ -1,5 +1,4 @@
 using Models;
-using Parameters.Enums;
 using UniRx;
 using VContainer;
 using VContainer.Unity;
@@ -23,7 +22,10 @@ namespace Presenters
         {
             _scoreModel.OnChangedScore.Subscribe(score =>
             {
-                _scoreBoardFactory.SetScoreBoardScore(score);
+                if (_scoreBoardFactory.ScoreBoard)
+                {
+                    _scoreBoardFactory.ScoreBoard.SetDisplayNumber(score);
+                }
             });
         }
     }

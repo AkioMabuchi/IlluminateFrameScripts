@@ -9,7 +9,6 @@ namespace Views
     public class CurrentTilePositionDetector : MonoBehaviour
     {
         [SerializeField] private Camera mainCamera;
-        [SerializeField] private LayerMask layerMask;
 
         private readonly Subject<Vector3> _subjectOnDetected = new();
         public IObservable<Vector3> OnDetected => _subjectOnDetected;
@@ -24,11 +23,13 @@ namespace Views
                         return;
                     }
 
+                    var plane = new Plane(Vector3.up, Vector3.zero);
+
                     var ray = mainCamera.ScreenPointToRay(Mouse.current.position.value);
 
-                    if (Physics.Raycast(ray, out var hit, float.PositiveInfinity, layerMask))
+                    if (plane.Raycast(ray, out var enter))
                     {
-                        _subjectOnDetected.OnNext(hit.point);
+                        _subjectOnDetected.OnNext(ray.GetPoint(enter));
                     }
                 }).AddTo(gameObject);
         }

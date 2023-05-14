@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
 
 namespace Models.Instances.Tiles
@@ -26,41 +26,90 @@ namespace Models.Instances.Tiles
         protected override List<ConductOutput> ConductSub(ElectricStatus electricStatus, LineDirection lineDirection)
         {
             var outputs = new List<ConductOutput>();
+            var score = 0;
             switch (lineDirection)
             {
                 case LineDirection.Up:
                 {
+                    if (_reactivePropertyElectricStatusLineB.Value == ElectricStatus.None)
+                    {
+                        if (_reactivePropertyElectricStatusLineA.Value == ElectricStatus.None)
+                        {
+                            score = 8;
+                        }
+                        else
+                        {
+                            score = 4;
+                        }
+                    }
                     _reactivePropertyElectricStatusLineB.Value = electricStatus;
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Left
+                        score = score,
+                        lineDirection = LineDirection.Left
                     });
                     break;
                 }
                 case LineDirection.Right:
                 {
+                    if (_reactivePropertyElectricStatusLineB.Value == ElectricStatus.None)
+                    {
+                        if (_reactivePropertyElectricStatusLineA.Value == ElectricStatus.None)
+                        {
+                            score = 8;
+                        }
+                        else
+                        {
+                            score = 4;
+                        }
+                    }
                     _reactivePropertyElectricStatusLineB.Value = electricStatus;
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Down
+                        score = score,
+                        lineDirection = LineDirection.Down
                     });
                     break;
                 }
                 case LineDirection.Down:
                 {
+                    if (_reactivePropertyElectricStatusLineA.Value == ElectricStatus.None)
+                    {
+                        if (_reactivePropertyElectricStatusLineB.Value == ElectricStatus.None)
+                        {
+                            score = 8;
+                        }
+                        else
+                        {
+                            score = 4;
+                        }
+                    }
                     _reactivePropertyElectricStatusLineA.Value = electricStatus;
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        score = score,
+                        lineDirection = LineDirection.Right
                     });
                     break;
                 }
                 case LineDirection.Left:
                 {
+                    if (_reactivePropertyElectricStatusLineA.Value == ElectricStatus.None)
+                    {
+                        if (_reactivePropertyElectricStatusLineB.Value == ElectricStatus.None)
+                        {
+                            score = 8;
+                        }
+                        else
+                        {
+                            score = 4;
+                        }
+                    }
                     _reactivePropertyElectricStatusLineA.Value = electricStatus;
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     break;
                 }

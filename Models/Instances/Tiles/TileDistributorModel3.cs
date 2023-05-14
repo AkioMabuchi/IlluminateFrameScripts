@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
-using UnityEngine;
 
 namespace Models.Instances.Tiles
 {
@@ -50,12 +49,17 @@ namespace Models.Instances.Tiles
         {
             var outputs = new List<ConductOutput>();
 
+            var score = 0;
             switch (lineDirection)
             {
                 case LineDirection.Right:
                 case LineDirection.Down:
                 case LineDirection.Left:
                 {
+                    if (_reactivePropertyElectricStatusCore.Value == ElectricStatus.None)
+                    {
+                        score = 10;
+                    }
                     _reactivePropertyElectricStatusLineA.Value = electricStatus;
                     _reactivePropertyElectricStatusLineB.Value = electricStatus;
                     _reactivePropertyElectricStatusLineC.Value = electricStatus;
@@ -71,11 +75,12 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        lineDirection = LineDirection.Right
                     });
                     break;
                 }
@@ -83,11 +88,12 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        score = score,
+                        lineDirection = LineDirection.Right
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Left
+                        lineDirection = LineDirection.Left
                     });
                     break;
                 }
@@ -95,11 +101,12 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Left
+                        lineDirection = LineDirection.Left
                     });
                     break;
                 }
@@ -110,7 +117,6 @@ namespace Models.Instances.Tiles
 
         protected override void IlluminateSub(ElectricStatus electricStatus, LineDirection inputLineDirection, LineDirection outputLineDirection)
         {
-            Debug.Log(inputLineDirection);
             switch (inputLineDirection)
             {
                 case LineDirection.Right:
@@ -132,7 +138,6 @@ namespace Models.Instances.Tiles
                     break;
                 }
             }
-            Debug.Log(outputLineDirection);
             switch (outputLineDirection)
             {
                 case LineDirection.Up:

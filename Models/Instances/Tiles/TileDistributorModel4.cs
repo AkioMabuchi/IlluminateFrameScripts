@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
 
 namespace Models.Instances.Tiles
@@ -44,6 +44,8 @@ namespace Models.Instances.Tiles
         {
             var outputs = new List<ConductOutput>();
 
+            var score = _reactivePropertyElectricStatusCore.Value == ElectricStatus.None ? 10 : 0;
+            
             _reactivePropertyElectricStatusLineA.Value = electricStatus;
             _reactivePropertyElectricStatusLineB.Value = electricStatus;
             _reactivePropertyElectricStatusLineC.Value = electricStatus;
@@ -56,15 +58,16 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        lineDirection = LineDirection.Right
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Left
+                        lineDirection = LineDirection.Left
                     });
                     break;
                 }
@@ -72,15 +75,16 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        lineDirection = LineDirection.Right
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Down
+                        lineDirection = LineDirection.Down
                     });
                     break;
                 }
@@ -88,15 +92,16 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Right
+                        score = score,
+                        lineDirection = LineDirection.Right
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Down
+                        lineDirection = LineDirection.Down
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Left
+                        lineDirection = LineDirection.Left
                     });
                     break;
                 }
@@ -104,15 +109,16 @@ namespace Models.Instances.Tiles
                 {
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Up
+                        score = score,
+                        lineDirection = LineDirection.Up
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Down
+                        lineDirection = LineDirection.Down
                     });
                     outputs.Add(new ConductOutput
                     {
-                        LineDirection = LineDirection.Left
+                        lineDirection = LineDirection.Left
                     });
                     break;
                 }

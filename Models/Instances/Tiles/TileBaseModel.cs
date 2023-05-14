@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Structs;
+using Enums;
+using Structs;
 using UniRx;
-using UnityEngine;
 
 namespace Models.Instances.Tiles
 {
@@ -116,34 +115,34 @@ namespace Models.Instances.Tiles
                 var output = outputs[i];
                 var tmpLineDirection = _reactivePropertyRotateStatus.Value switch
                 {
-                    RotateStatus.Rotate0 => output.LineDirection,
-                    RotateStatus.Rotate90 => output.LineDirection switch
+                    RotateStatus.Rotate0 => output.lineDirection,
+                    RotateStatus.Rotate90 => output.lineDirection switch
                     {
                         LineDirection.Up => LineDirection.Right,
                         LineDirection.Right => LineDirection.Down,
                         LineDirection.Down => LineDirection.Left,
                         LineDirection.Left => LineDirection.Up,
-                        _ => output.LineDirection
+                        _ => output.lineDirection
                     },
-                    RotateStatus.Rotate180 => output.LineDirection switch
+                    RotateStatus.Rotate180 => output.lineDirection switch
                     {
                         LineDirection.Up => LineDirection.Down,
                         LineDirection.Right => LineDirection.Left,
                         LineDirection.Down => LineDirection.Up,
                         LineDirection.Left => LineDirection.Right,
-                        _ => output.LineDirection
+                        _ => output.lineDirection
                     },
-                    RotateStatus.Rotate270 => output.LineDirection switch
+                    RotateStatus.Rotate270 => output.lineDirection switch
                     {
                         LineDirection.Up => LineDirection.Left,
                         LineDirection.Right => LineDirection.Up,
                         LineDirection.Down => LineDirection.Right,
                         LineDirection.Left => LineDirection.Down,
-                        _ => output.LineDirection
+                        _ => output.lineDirection
                     },
-                    _ => output.LineDirection
+                    _ => output.lineDirection
                 };
-                output.LineDirection = tmpLineDirection;
+                output.lineDirection = tmpLineDirection;
                 outputs[i] = output;
             }
 

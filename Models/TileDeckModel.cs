@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Parameters.Enums;
+using Enums;
 using UniRx;
-using UnityEngine;
 
 namespace Models
 {
@@ -10,7 +9,7 @@ namespace Models
         private readonly ReactiveCollection<TileType> _reactiveCollectionTileDeck = new();
         private readonly ReactiveProperty<int> _reactivePropertyCurrentTileDeckIndex = new(0);
 
-        public void ResetTileDeck(PanelSize panelSize)
+        public void ResetTileDeck(FrameSize frameSize)
         {
             _reactiveCollectionTileDeck.Clear();
             _reactivePropertyCurrentTileDeckIndex.Value = 0;
@@ -27,39 +26,73 @@ namespace Models
                 TileType.Cross
             };
 
-            switch (panelSize)
+            var fixedTilesAmounts = frameSize switch
             {
-                case PanelSize.Large:
+                FrameSize.Small => new Dictionary<TileType, int>
                 {
-                    foreach (var (tileType, amount) in new Dictionary<TileType, int>()
-                             {
-                                 {TileType.Straight, 20},
-                                 {TileType.Curve, 25},
-                                 {TileType.TwinCurves, 8},
-                                 {TileType.Cross, 9},
-                                 {TileType.Distributor3, 8},
-                                 {TileType.Distributor4, 3},
-                                 {TileType.Bulb, 10},
-                             })
-                    {
-                        for (var i = 0; i < amount; i++)
-                        {
-                            _reactiveCollectionTileDeck.Add(tileType);
-                        }
-                    }
+                    {TileType.Straight, 6},
+                    {TileType.Curve, 7},
+                    {TileType.TwinCurves, 4},
+                    {TileType.Cross, 4},
+                    {TileType.Distributor3, 3},
+                    {TileType.Distributor4, 1},
+                    {TileType.Bulb, 2}
+                },
+                FrameSize.Medium => new Dictionary<TileType, int>
+                {
+                    {TileType.Straight, 10},
+                    {TileType.Curve, 13},
+                    {TileType.TwinCurves, 7},
+                    {TileType.Cross, 7},
+                    {TileType.Distributor3, 5},
+                    {TileType.Distributor4, 2},
+                    {TileType.Bulb, 6}
+                },
+                FrameSize.Large => new Dictionary<TileType, int>()
+                {
+                    {TileType.Straight, 18},
+                    {TileType.Curve, 23},
+                    {TileType.TwinCurves, 10},
+                    {TileType.Cross, 11},
+                    {TileType.Distributor3, 8},
+                    {TileType.Distributor4, 3},
+                    {TileType.Bulb, 10}
+                },
+                _ => new Dictionary<TileType, int>()
+            };
 
-                    for (var i = 0; i < 11; i++)
-                    {
-                        _reactiveCollectionTileDeck.Add(oneWayTiles[UnityEngine.Random.Range(0, oneWayTiles.Count)]);
-                    }
+            var extraOneWayTilesAmount = frameSize switch
+            {
+                FrameSize.Small => 2,
+                FrameSize.Medium => 7,
+                FrameSize.Large => 11,
+                _ => 0
+            };
 
-                    for (var i = 0; i < 6; i++)
-                    {
-                        _reactiveCollectionTileDeck.Add(twoWaysTiles[UnityEngine.Random.Range(0, twoWaysTiles.Count)]);
-                    }
+            var extraTwoWaysTilesAmount = frameSize switch
+            {
+                FrameSize.Small => 1,
+                FrameSize.Medium => 3,
+                FrameSize.Large => 6,
+                _ => 0
+            };
 
-                    break;
+            foreach (var (tileType, amount) in fixedTilesAmounts)
+            {
+                for (var i = 0; i < amount; i++)
+                {
+                    _reactiveCollectionTileDeck.Add(tileType);
                 }
+            }
+
+            for (var i = 0; i < extraOneWayTilesAmount; i++)
+            {
+                _reactiveCollectionTileDeck.Add(oneWayTiles[UnityEngine.Random.Range(0, oneWayTiles.Count)]);
+            }
+
+            for (var i = 0; i < extraTwoWaysTilesAmount; i++)
+            {
+                _reactiveCollectionTileDeck.Add(twoWaysTiles[UnityEngine.Random.Range(0, twoWaysTiles.Count)]);
             }
 
             for (var a = _reactiveCollectionTileDeck.Count - 1; a > 1; a--)

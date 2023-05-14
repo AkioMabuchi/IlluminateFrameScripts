@@ -1,7 +1,6 @@
 using System.Collections.Generic;
+using Enums;
 using Models;
-using Parameters.Enums;
-using Unity.VisualScripting;
 using UnityEngine;
 using VContainer;
 
@@ -10,24 +9,26 @@ namespace Processes
     public class UpdateValidCellPositionsProcess
     {
         private readonly MainBoardModel _mainBoardModel;
+        private readonly MainFrameModel _mainFrameModel;
         private readonly TilesModel _tilesModel;
         private readonly ValidCellPositionsModel _validCellPositionsModel;
 
         [Inject]
-        public UpdateValidCellPositionsProcess(MainBoardModel mainBoardModel, TilesModel tilesModel,
-            ValidCellPositionsModel validCellPositionsModel)
+        public UpdateValidCellPositionsProcess(MainBoardModel mainBoardModel, MainFrameModel mainFrameModel,
+            TilesModel tilesModel, ValidCellPositionsModel validCellPositionsModel)
         {
             _mainBoardModel = mainBoardModel;
+            _mainFrameModel = mainFrameModel;
             _tilesModel = tilesModel;
             _validCellPositionsModel = validCellPositionsModel;
         }
 
         private struct TileDirections
         {
-            public TileEdgeType Up;
-            public TileEdgeType Right;
-            public TileEdgeType Down;
-            public TileEdgeType Left;
+            public TileEdgeType up;
+            public TileEdgeType right;
+            public TileEdgeType down;
+            public TileEdgeType left;
 
             public IEnumerable<RotateStatus> ValidRotateStatuses(TileDirections tileDirections)
             {
@@ -48,34 +49,34 @@ namespace Processes
 
                 var validRotateStatuses = new List<RotateStatus>();
 
-                if (IsValid(Up, tileDirections.Up) &&
-                    IsValid(Right, tileDirections.Right) &&
-                    IsValid(Down, tileDirections.Down) &&
-                    IsValid(Left, tileDirections.Left))
+                if (IsValid(up, tileDirections.up) &&
+                    IsValid(right, tileDirections.right) &&
+                    IsValid(down, tileDirections.down) &&
+                    IsValid(left, tileDirections.left))
                 {
                     validRotateStatuses.Add(RotateStatus.Rotate0);
                 }
 
-                if (IsValid(Up, tileDirections.Right) &&
-                    IsValid(Right, tileDirections.Down) &&
-                    IsValid(Down, tileDirections.Left) &&
-                    IsValid(Left, tileDirections.Up))
+                if (IsValid(up, tileDirections.right) &&
+                    IsValid(right, tileDirections.down) &&
+                    IsValid(down, tileDirections.left) &&
+                    IsValid(left, tileDirections.up))
                 {
                     validRotateStatuses.Add(RotateStatus.Rotate90);
                 }
 
-                if (IsValid(Up, tileDirections.Down) &&
-                    IsValid(Right, tileDirections.Left) &&
-                    IsValid(Down, tileDirections.Up) &&
-                    IsValid(Left, tileDirections.Right))
+                if (IsValid(up, tileDirections.down) &&
+                    IsValid(right, tileDirections.left) &&
+                    IsValid(down, tileDirections.up) &&
+                    IsValid(left, tileDirections.right))
                 {
                     validRotateStatuses.Add(RotateStatus.Rotate180);
                 }
 
-                if (IsValid(Up, tileDirections.Left) &&
-                    IsValid(Right, tileDirections.Up) &&
-                    IsValid(Down, tileDirections.Right) &&
-                    IsValid(Left, tileDirections.Down))
+                if (IsValid(up, tileDirections.left) &&
+                    IsValid(right, tileDirections.up) &&
+                    IsValid(down, tileDirections.right) &&
+                    IsValid(left, tileDirections.down))
                 {
                     validRotateStatuses.Add(RotateStatus.Rotate270);
                 }
@@ -108,7 +109,7 @@ namespace Processes
                         continue;
                     }
 
-                    if (IsInTheBoard(nextCellPosition))
+                    if (_mainFrameModel.Frame.IsInBoard(nextCellPosition))
                     {
                         var tileDirections = new TileDirections();
 
@@ -123,7 +124,7 @@ namespace Processes
                                 var tileModel = _tilesModel.GetTileModel(nextTileId);
                                 tileEdgeType = tileModel.GetTileEdgeType(nextDirection);
                             }
-                            else if (IsInTheBoard(nextNextCellPosition))
+                            else if (_mainFrameModel.Frame.IsInBoard(nextNextCellPosition))
                             {
                                 tileEdgeType = TileEdgeType.Free;
                             }
@@ -136,22 +137,22 @@ namespace Processes
                             {
                                 case LineDirection.Up:
                                 {
-                                    tileDirections.Up = tileEdgeType;
+                                    tileDirections.up = tileEdgeType;
                                     break;
                                 }
                                 case LineDirection.Right:
                                 {
-                                    tileDirections.Right = tileEdgeType;
+                                    tileDirections.right = tileEdgeType;
                                     break;
                                 }
                                 case LineDirection.Down:
                                 {
-                                    tileDirections.Down = tileEdgeType;
+                                    tileDirections.down = tileEdgeType;
                                     break;
                                 }
                                 case LineDirection.Left:
                                 {
-                                    tileDirections.Left = tileEdgeType;
+                                    tileDirections.left = tileEdgeType;
                                     break;
                                 }
                             }
@@ -167,64 +168,64 @@ namespace Processes
                 {
                     TileType.Straight, new TileDirections
                     {
-                        Up = TileEdgeType.Solid,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Solid,
-                        Left = TileEdgeType.Line,
+                        up = TileEdgeType.Solid,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Solid,
+                        left = TileEdgeType.Line,
                     }
                 },
                 {
                     TileType.Curve, new TileDirections
                     {
-                        Up = TileEdgeType.Line,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Solid,
-                        Left = TileEdgeType.Solid
+                        up = TileEdgeType.Line,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Solid,
+                        left = TileEdgeType.Solid
                     }
                 },
                 {
                     TileType.TwinCurves, new TileDirections
                     {
-                        Up = TileEdgeType.Line,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Line,
-                        Left = TileEdgeType.Line
+                        up = TileEdgeType.Line,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Line,
+                        left = TileEdgeType.Line
                     }
                 },
                 {
                     TileType.Cross, new TileDirections
                     {
-                        Up = TileEdgeType.Line,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Line,
-                        Left = TileEdgeType.Line
+                        up = TileEdgeType.Line,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Line,
+                        left = TileEdgeType.Line
                     }
                 },
                 {
                     TileType.Distributor3, new TileDirections
                     {
-                        Up = TileEdgeType.Line,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Solid,
-                        Left = TileEdgeType.Line
+                        up = TileEdgeType.Line,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Solid,
+                        left = TileEdgeType.Line
                     }
                 },
                 {
                     TileType.Distributor4, new TileDirections
                     {
-                        Up = TileEdgeType.Line,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Line,
-                        Left = TileEdgeType.Line
+                        up = TileEdgeType.Line,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Line,
+                        left = TileEdgeType.Line
                     }
                 },
                 {
                     TileType.Bulb, new TileDirections
                     {
-                        Up = TileEdgeType.Solid,
-                        Right = TileEdgeType.Line,
-                        Down = TileEdgeType.Solid,
-                        Left = TileEdgeType.Solid
+                        up = TileEdgeType.Solid,
+                        right = TileEdgeType.Line,
+                        down = TileEdgeType.Solid,
+                        left = TileEdgeType.Solid
                     }
                 }
 
@@ -233,25 +234,25 @@ namespace Processes
             foreach (var (tileType, tileDirectionsB)in validTileTypes)
             {
                 var dicR = new Dictionary<Vector2Int, HashSet<RotateStatus>>();
+                var canBePut = false;
                 foreach (var (cellPosition, tileDirectionsA) in dic)
                 {
                     var h = tileDirectionsB.ValidRotateStatuses(tileDirectionsA);
                     var validRotations = new HashSet<RotateStatus>();
                     foreach (var akio in h)
                     {
+                        canBePut = true;
                         validRotations.Add(akio);
                     }
 
                     dicR.Add(cellPosition, validRotations);
                 }
 
-                _validCellPositionsModel.SetValidCellPositions(tileType, dicR);
+                if (canBePut)
+                {
+                    _validCellPositionsModel.SetValidCellPositions(tileType, dicR);
+                }
             }
-        }
-
-        private bool IsInTheBoard(Vector2Int cellPosition)
-        {
-            return Mathf.Abs(cellPosition.x) <= 7 && Mathf.Abs(cellPosition.y) <= 6;
         }
     }
 }

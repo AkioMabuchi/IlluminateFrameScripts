@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
 
 namespace Models.Instances.Tiles
@@ -58,7 +58,7 @@ namespace Models.Instances.Tiles
                     _reactivePropertyElectricStatusPowerSymbol.Value = ElectricStatus.Shorted;
                     outputs.Add(new ConductOutput
                     {
-                        IsShorted = true
+                        isShorted = true
                     });
                     break;
                 }
@@ -68,7 +68,7 @@ namespace Models.Instances.Tiles
                     _reactivePropertyElectricStatusPowerSymbol.Value = ElectricStatus.Shorted;
                     outputs.Add(new ConductOutput
                     {
-                        IsShorted = true
+                        isShorted = true
                     });
                     break;
                 }
@@ -100,13 +100,13 @@ namespace Models.Instances.Tiles
         {
             new()
             {
-                ElectricStatus = ElectricStatus.Alternating,
-                LineDirection = LineDirection.Up
+                electricStatus = ElectricStatus.Alternating,
+                lineDirection = LineDirection.Up
             },
             new()
             {
-                ElectricStatus = ElectricStatus.Alternating,
-                LineDirection = LineDirection.Down
+                electricStatus = ElectricStatus.Alternating,
+                lineDirection = LineDirection.Down
             }
         };
     }

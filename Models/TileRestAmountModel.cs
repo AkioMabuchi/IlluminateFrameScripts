@@ -1,5 +1,5 @@
 using System;
-using Parameters.Enums;
+using Enums;
 using UniRx;
 
 namespace Models
@@ -8,14 +8,15 @@ namespace Models
     {
         private readonly ReactiveProperty<int> _reactivePropertyTileRestAmount = new(0);
         public IObservable<int> OnChangedTileRestAmount => _reactivePropertyTileRestAmount;
+        public bool IsRunOUt => _reactivePropertyTileRestAmount.Value <= 0;
 
-        public void ResetTileRestAmount(PanelSize panelSize)
+        public void ResetTileRestAmount(FrameSize frameSize)
         {
-            _reactivePropertyTileRestAmount.Value = panelSize switch
+            _reactivePropertyTileRestAmount.Value = frameSize switch
             {
-                PanelSize.Small => 30,
-                PanelSize.Medium => 60,
-                PanelSize.Large => 100,
+                FrameSize.Small => 30,
+                FrameSize.Medium => 60,
+                FrameSize.Large => 100,
                 _ => 0
             };
         }

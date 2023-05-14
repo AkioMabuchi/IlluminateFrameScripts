@@ -1,42 +1,41 @@
-using System;
 using System.Collections.Generic;
-using System.Threading;
-using Cysharp.Threading.Tasks;
+using Enums;
+using Interfaces;
 using Models;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Structs;
 using UnityEngine;
 using VContainer;
-using IlluminatePath = Parameters.Structs.IlluminatePath;
+using IlluminatePath = Structs.IlluminatePath;
 
 namespace Processes
 {
     public class ConductMainBoardProcess
     {
         private readonly MainBoardModel _mainBoardModel;
+        private readonly MainFrameModel _mainFrameModel;
         private readonly TilesModel _tilesModel;
         
         private struct Akio
         {
-            public ElectricStatus ElectricStatus;
-            public LineDirection LineDirectionPower;
-            public LineDirection LineDirection;
-            public Vector2Int CellPositionPower;
-            public Vector2Int CellPosition;
-            public List<LineDirectionPair> LineDirectionPairs;
+            public ElectricStatus electricStatus;
+            public LineDirection lineDirectionPower;
+            public LineDirection lineDirection;
+            public Vector2Int cellPositionPower;
+            public Vector2Int cellPosition;
+            public List<LineDirectionPair> lineDirectionPairs;
         }
 
         private struct ShortedAkio
         {
-            public LineDirection LineDirection;
-            public Vector2Int CellPosition;
+            public LineDirection lineDirection;
+            public Vector2Int cellPosition;
         }
 
         [Inject]
-        public ConductMainBoardProcess(MainBoardModel mainBoardModel, TilesModel tilesModel)
+        public ConductMainBoardProcess(MainBoardModel mainBoardModel, MainFrameModel mainFrameModel, TilesModel tilesModel)
         {
             _mainBoardModel = mainBoardModel;
+            _mainFrameModel = mainFrameModel;
             _tilesModel = tilesModel;
         }
 
@@ -44,6 +43,7 @@ namespace Processes
         {
             var isCircuitShorted = false;
             var isCircuitClosed = true;
+            var scoredTiles = new List<ScoredTile>();
             var illuminatePaths = new List<IlluminatePath>();
 
             var queuePower = new Queue<Akio>();
@@ -63,16 +63,16 @@ namespace Processes
                     {
                         queuePower.Enqueue(new Akio
                         {
-                            ElectricStatus = output.ElectricStatus,
-                            LineDirectionPower = output.LineDirection,
-                            LineDirection = output.LineDirection,
-                            CellPositionPower = cellPosition,
-                            CellPosition = cellPosition,
-                            LineDirectionPairs = new List<LineDirectionPair>
+                            electricStatus = output.electricStatus,
+                            lineDirectionPower = output.lineDirection,
+                            lineDirection = output.lineDirection,
+                            cellPositionPower = cellPosition,
+                            cellPosition = cellPosition,
+                            lineDirectionPairs = new List<LineDirectionPair>
                             {
                                 new()
                                 {
-                                    LineDirectionOutput = output.LineDirection
+                                    lineDirectionOutput = output.lineDirection
                                 }
                             }
                         });
@@ -88,13 +88,13 @@ namespace Processes
                 {
                     var akio = queue.Dequeue();
 
-                    if (hashSet.Contains((akio.CellPosition, akio.LineDirection)))
+                    if (hashSet.Contains((akio.cellPosition, akio.lineDirection)))
                     {
                         continue;
                     }
 
-                    hashSet.Add((akio.CellPosition, akio.LineDirection));
-                    var nextCellPosition = akio.CellPosition + akio.LineDirection switch
+                    hashSet.Add((akio.cellPosition, akio.lineDirection));
+                    var nextCellPosition = akio.cellPosition + akio.lineDirection switch
                     {
                         LineDirection.Up => new Vector2Int(0, 1),
                         LineDirection.Right => new Vector2Int(1, 0),
@@ -102,60 +102,71 @@ namespace Processes
                         LineDirection.Left => new Vector2Int(-1, 0),
                         _ => Vector2Int.zero
                     };
-
-
-                    // この間にパネルサイズ処理を挟んで！
-
-                    var nullableTileId = _mainBoardModel.GetPutTileId(nextCellPosition);
-                    if (nullableTileId.HasValue)
+                    
+                    if (_mainFrameModel.Frame.IsInBoard(nextCellPosition))
                     {
 
-                        var tileId = nullableTileId.Value;
-                        var tileModel = _tilesModel.GetTileModel(tileId);
-                        foreach (var output in tileModel.Conduct(akio.ElectricStatus, akio.LineDirection))
+                        var nullableTileId = _mainBoardModel.GetPutTileId(nextCellPosition);
+                        if (nullableTileId.HasValue)
                         {
-                            var nextPath = new List<LineDirectionPair>(akio.LineDirectionPairs)
+
+                            var tileId = nullableTileId.Value;
+                            var tileModel = _tilesModel.GetTileModel(tileId);
+                            foreach (var output in tileModel.Conduct(akio.electricStatus, akio.lineDirection))
                             {
-                                new()
+                                var nextPath = new List<LineDirectionPair>(akio.lineDirectionPairs)
                                 {
-                                    LineDirectionInput = akio.LineDirection,
-                                    LineDirectionOutput = output.LineDirection
+                                    new()
+                                    {
+                                        lineDirectionInput = akio.lineDirection,
+                                        lineDirectionOutput = output.lineDirection
+                                    }
+                                };
+
+                                if (output.score > 0)
+                                {
+                                    scoredTiles.Add(new ScoredTile
+                                    {
+                                        cellPosition = nextCellPosition,
+                                        electricStatus = akio.electricStatus,
+                                        score = output.score
+                                    });
                                 }
-                            };
 
-                            if (output.IsShorted)
-                            {
-                                shortedQueue.Enqueue(new ShortedAkio
+                                if (output.isShorted)
                                 {
-                                    CellPosition = akio.CellPositionPower,
-                                    LineDirection = akio.LineDirectionPower
+                                    shortedQueue.Enqueue(new ShortedAkio
+                                    {
+                                        cellPosition = akio.cellPositionPower,
+                                        lineDirection = akio.lineDirectionPower
+                                    });
+                                }
+
+                                if (output.terminalType != TerminalType.None)
+                                {
+                                    illuminatePaths.Add(new IlluminatePath
+                                    {
+                                        electricStatus = akio.electricStatus,
+                                        cellPosition = akio.cellPositionPower,
+                                        lineDirectionPairs = nextPath
+                                    });
+                                }
+
+                                queue.Enqueue(new Akio
+                                {
+                                    electricStatus = akio.electricStatus,
+                                    lineDirectionPower = akio.lineDirectionPower,
+                                    lineDirection = output.lineDirection,
+                                    cellPositionPower = akio.cellPositionPower,
+                                    cellPosition = nextCellPosition,
+                                    lineDirectionPairs = nextPath
                                 });
                             }
-
-                            if (output.TerminalType != TerminalType.None)
-                            {
-                                illuminatePaths.Add(new IlluminatePath
-                                {
-                                    ElectricStatus = akio.ElectricStatus,
-                                    CellPosition = akio.CellPositionPower,
-                                    LineDirectionPairs = nextPath
-                                });
-                            }
-
-                            queue.Enqueue(new Akio
-                            {
-                                ElectricStatus = akio.ElectricStatus,
-                                LineDirectionPower = akio.LineDirectionPower,
-                                LineDirection = output.LineDirection,
-                                CellPositionPower = akio.CellPositionPower,
-                                CellPosition = nextCellPosition,
-                                LineDirectionPairs = nextPath
-                            });
                         }
-                    }
-                    else
-                    {
-                        isCircuitClosed = false;
+                        else
+                        {
+                            isCircuitClosed = false;
+                        }
                     }
                 }
             }
@@ -166,14 +177,14 @@ namespace Processes
 
                 var akio = shortedQueue.Dequeue();
 
-                if (shortedHashSet.Contains((akio.CellPosition, akio.LineDirection)))
+                if (shortedHashSet.Contains((akio.cellPosition, akio.lineDirection)))
                 {
                     continue;
                 }
 
-                shortedHashSet.Add((akio.CellPosition, akio.LineDirection));
+                shortedHashSet.Add((akio.cellPosition, akio.lineDirection));
 
-                var nextCellPosition = akio.CellPosition + akio.LineDirection switch
+                var nextCellPosition = akio.cellPosition + akio.lineDirection switch
                 {
                     LineDirection.Up => new Vector2Int(0, 1),
                     LineDirection.Right => new Vector2Int(1, 0),
@@ -182,30 +193,31 @@ namespace Processes
                     _ => Vector2Int.zero
                 };
 
-
-                // この間にパネルサイズ処理を挟んで！
-
-                var nullableTileId = _mainBoardModel.GetPutTileId(nextCellPosition);
-                if (nullableTileId.HasValue)
+                if (_mainFrameModel.Frame.IsInBoard(nextCellPosition))
                 {
-                    var tileId = nullableTileId.Value;
-                    var tileModel = _tilesModel.GetTileModel(tileId);
-                    foreach (var output in tileModel.Conduct(ElectricStatus.Shorted, akio.LineDirection))
+                    var nullableTileId = _mainBoardModel.GetPutTileId(nextCellPosition);
+                    if (nullableTileId.HasValue)
                     {
-                        shortedQueue.Enqueue(new ShortedAkio
+                        var tileId = nullableTileId.Value;
+                        var tileModel = _tilesModel.GetTileModel(tileId);
+                        foreach (var output in tileModel.Conduct(ElectricStatus.Shorted, akio.lineDirection))
                         {
-                            LineDirection = output.LineDirection,
-                            CellPosition = nextCellPosition,
-                        });
+                            shortedQueue.Enqueue(new ShortedAkio
+                            {
+                                lineDirection = output.lineDirection,
+                                cellPosition = nextCellPosition,
+                            });
+                        }
                     }
                 }
             }
 
             return new MainBoardConductionResult
             {
-                IsCircuitShorted = isCircuitShorted,
-                IsCircuitClosed = isCircuitClosed,
-                IlluminatePaths = illuminatePaths
+                isCircuitShorted = isCircuitShorted,
+                isCircuitClosed = isCircuitClosed,
+                scoredTiles = scoredTiles,
+                illuminatePaths = illuminatePaths
             };
         }
     }

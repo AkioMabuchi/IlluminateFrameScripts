@@ -1,5 +1,4 @@
-using Models.Instances.Tiles;
-using Parameters.Interfaces;
+using Interfaces;
 using UniRx;
 using Views.Instances.Tiles;
 
@@ -12,32 +11,32 @@ namespace Presenters.Instances.Tiles
             tileDistributor4Model.OnChangedRotateStatus.Subscribe(rotateStatus =>
             {
                 tileDistributor4.SetRotateStatus(rotateStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileDistributor4Model.OnChangedElectricStatusLineA.Subscribe(electricStatus =>
             {
                 tileDistributor4.SetElectricStatusLineA(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileDistributor4Model.OnChangedElectricStatusLineB.Subscribe(electricStatus =>
             {
                 tileDistributor4.SetElectricStatusLineB(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileDistributor4Model.OnChangedElectricStatusLineC.Subscribe(electricStatus =>
             {
                 tileDistributor4.SetElectricStatusLineC(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileDistributor4Model.OnChangedElectricStatusLineD.Subscribe(electricStatus =>
             {
                 tileDistributor4.SetElectricStatusLineD(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
 
             tileDistributor4Model.OnChangedElectricStatusCore.Subscribe(electricStatus =>
             {
                 tileDistributor4.SetElectricStatusCore(electricStatus);
-            }).AddTo(CompositeDisposable);
+            }).AddTo(compositeDisposable);
         }
     }
 }

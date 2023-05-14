@@ -1,4 +1,3 @@
-using System;
 using UniRx;
 using UnityEngine;
 
@@ -6,17 +5,17 @@ namespace Models
 {
     public class SelectedBoardCellModel
     {
-        private readonly ReactiveProperty<Vector2Int?> _reactivePropertySelectedPanelCell = new(null);
-        public Vector2Int? SelectedPanelCell => _reactivePropertySelectedPanelCell.Value;
+        private readonly ReactiveProperty<Vector2Int?> _reactivePropertySelectedBoardCell = new(null);
+        public Vector2Int? SelectedBoardCell => _reactivePropertySelectedBoardCell.Value;
 
         public void SetSelectedPanelCell(Vector2Int cellPosition)
         {
-            _reactivePropertySelectedPanelCell.Value = cellPosition;
+            _reactivePropertySelectedBoardCell.Value = cellPosition;
         }
 
         public void SetSelectedPanelCellNull()
         {
-            _reactivePropertySelectedPanelCell.Value = null;
+            _reactivePropertySelectedBoardCell.Value = null;
         }
     }
 }

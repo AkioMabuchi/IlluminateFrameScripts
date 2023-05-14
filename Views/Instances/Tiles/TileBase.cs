@@ -1,7 +1,9 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using Parameters.Enums;
+using Enums;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Views.Instances.Tiles
@@ -22,7 +24,7 @@ namespace Views.Instances.Tiles
             _rotateStatus = rotateStatus;
         }
 
-        public void RotateTile()
+        public void Rotate()
         {
             _tweenerRotation?.Kill();
             
@@ -64,7 +66,7 @@ namespace Views.Instances.Tiles
                 }).SetLink(gameObject);
         }
 
-        public void RotateTileImmediate()
+        public void RotateImmediate()
         {
             _tweenerRotation?.Kill();
             
@@ -78,6 +80,20 @@ namespace Views.Instances.Tiles
             };
 
             transformRotatable.localEulerAngles = new Vector3(0.0f, rotationY, 0.0f);
+        }
+
+        public void Throw()
+        {
+            var velocity = new Vector3(0.0f, 2.0f, -1.2f);
+            var rotationX = 0.0f;
+            this.UpdateAsObservable()
+                .Subscribe(_ =>
+                {
+                    transform.position += velocity * Time.deltaTime;
+                    transform.eulerAngles = new Vector3(rotationX, 0.0f, 0.0f);
+                    velocity.y -= 1.0f * Time.deltaTime;
+                    rotationX -= 2500.0f * Time.deltaTime;
+                }).AddTo(gameObject);
         }
     }
 }

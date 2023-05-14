@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Parameters.Enums;
-using Parameters.Interfaces;
-using Parameters.Structs;
+using Enums;
+using Interfaces;
+using Structs;
 using UniRx;
 
 namespace Models.Instances.Tiles
 {
-    public class TilePowerNormalModel : TileBaseModel, ITilePower2
+    public class TilePowerNormalModel : TileBaseModel,ITilePower, ITilePower2
     {
         private readonly ReactiveProperty<ElectricStatus>
             _reactivePropertyElectricStatusLineA = new(ElectricStatus.Normal);
@@ -57,7 +57,7 @@ namespace Models.Instances.Tiles
                     _reactivePropertyElectricStatusPowerSymbol.Value = ElectricStatus.Shorted;
                     outputs.Add(new ConductOutput
                     {
-                        IsShorted = true
+                        isShorted = true
                     });
                     break;
                 }
@@ -67,7 +67,7 @@ namespace Models.Instances.Tiles
                     _reactivePropertyElectricStatusPowerSymbol.Value = ElectricStatus.Shorted;
                     outputs.Add(new ConductOutput
                     {
-                        IsShorted = true
+                        isShorted = true
                     });
                     break;
                 }
@@ -95,5 +95,19 @@ namespace Models.Instances.Tiles
                 }
             }
         }
+
+        public IEnumerable<PowerOutput> PowerOutputs => new List<PowerOutput>
+        {
+            new()
+            {
+                electricStatus = ElectricStatus.Normal,
+                lineDirection = LineDirection.Right
+            },
+            new()
+            {
+                electricStatus = ElectricStatus.Normal,
+                lineDirection = LineDirection.Left
+            }
+        };
     }
 }

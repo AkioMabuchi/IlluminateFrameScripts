@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Parameters.Enums;
+using Enums;
 using UniRx;
 using UnityEngine;
 
@@ -9,6 +9,8 @@ namespace Models
     {
         private readonly ReactiveDictionary<TileType, IReadOnlyDictionary<Vector2Int, HashSet<RotateStatus>>>
             _reactiveDictionaryValidCellPositions = new();
+
+        public IEnumerable<TileType> ValidTiles => _reactiveDictionaryValidCellPositions.Keys;
 
         public void ClearValidCellPositions()
         {
