@@ -40,9 +40,9 @@ namespace Views
 
         public void ChangeImageButtonTexts()
         {
-            imageButtonSmall.ChangeTexts("SelectFrameSizeSmall", "SelectFrameSizeSmallDetails");
-            imageButtonMedium.ChangeTexts("SelectFrameSizeMedium", "SelectFrameSizeMediumDetails");
-            imageButtonLarge.ChangeTexts("SelectFrameSizeLarge", "SelectFrameSizeLargeDetails");
+            imageButtonSmall.ChangeTexts(LocaleKey.SelectFrameSizeSmall, LocaleKey.SelectFrameSizeSmallDetails);
+            imageButtonMedium.ChangeTexts(LocaleKey.SelectFrameSizeMedium, LocaleKey.SelectFrameSizeMediumDetails);
+            imageButtonLarge.ChangeTexts(LocaleKey.SelectFrameSizeLarge, LocaleKey.SelectFrameSizeLargeDetails);
         }
 
         public void FadeIn()

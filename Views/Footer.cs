@@ -33,16 +33,15 @@ namespace Views
 
         public void ChangeFootingText(FooterFootingText footingText)
         {
-            textMeshProFooting.text = LocalizationSettings.StringDatabase.GetLocalizedString(
-                Const.LocalizationStrings, footingText switch
-                {
-                    FooterFootingText.ReturnToTitle => "FooterReturnToTitle",
-                    FooterFootingText.SelectFrameSizeSmall => "FooterSelectFrameSizeSmall",
-                    FooterFootingText.SelectFrameSizeMedium => "FooterSelectFrameSizeMedium",
-                    FooterFootingText.SelectFrameSizeLarge => "FooterSelectFrameSizeLarge",
-                    FooterFootingText.MainGame => "FooterMainGame",
-                    _ => "None"
-                });
+            textMeshProFooting.text = Localize.LocaleString(footingText switch
+            {
+                FooterFootingText.ReturnToTitle => LocaleKey.FooterReturnToTitle,
+                FooterFootingText.SelectFrameSizeSmall => LocaleKey.FooterSelectFrameSizeSmall,
+                FooterFootingText.SelectFrameSizeMedium => LocaleKey.FooterSelectFrameSizeMedium,
+                FooterFootingText.SelectFrameSizeLarge => LocaleKey.FooterSelectFrameSizeLarge,
+                FooterFootingText.MainGame => LocaleKey.FooterMainGame,
+                _ => LocaleKey.None
+            });
         }
         public void PullDown()
         {

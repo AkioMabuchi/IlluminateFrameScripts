@@ -38,12 +38,11 @@ namespace Views
 
         public void ChangeHeadingText(HeaderHeadingText headingText)
         {
-            textMeshProHeading.text = LocalizationSettings.StringDatabase.GetLocalizedString(
-                Const.LocalizationStrings, headingText switch
-                {
-                    HeaderHeadingText.SelectFrameSize => "HeaderSelectFrameSize",
-                    _ => "None"
-                });
+            textMeshProHeading.text = Localize.LocaleString(headingText switch
+            {
+                HeaderHeadingText.SelectFrameSize => LocaleKey.HeaderSelectFrameSize,
+                _ => LocaleKey.None
+            });
         }
 
         public void PullDown()

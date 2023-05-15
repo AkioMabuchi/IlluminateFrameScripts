@@ -1,11 +1,11 @@
 using System;
 using Classes.Statics;
 using DG.Tweening;
+using Enums;
 using TMPro;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 namespace Views.Instances
@@ -55,10 +55,9 @@ namespace Views.Instances
             image.rectTransform.sizeDelta = sizeDelta;   
         }
 
-        public void ChangeText(string stringLocale)
+        public void ChangeText(LocaleKey localeKey)
         {
-            textMeshProImageButton.text =
-                LocalizationSettings.StringDatabase.GetLocalizedString(Const.LocalizationStrings, stringLocale);
+            textMeshProImageButton.text = Localize.LocaleString(localeKey);
         }
 
         public void Resize()

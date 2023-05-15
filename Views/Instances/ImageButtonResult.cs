@@ -6,20 +6,18 @@ using TMPro;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
-using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 namespace Views.Instances
 {
     [RequireComponent(typeof(Image))]
     [RequireComponent(typeof(ObservableEventTrigger))]
-    public class ImageButtonSelectFrameSize : MonoBehaviour
+    public class ImageButtonResult : MonoBehaviour
     {
         [SerializeField] private Image image;
         [SerializeField] private ObservableEventTrigger observableEventTrigger;
 
-        [SerializeField] private TextMeshProUGUI textMeshProMain;
-        [SerializeField] private TextMeshProUGUI textMeshProDetails;
+        [SerializeField] private TextMeshProUGUI textMeshPro;
         
         [SerializeField] private float scaleZoomUp;
         
@@ -27,18 +25,18 @@ namespace Views.Instances
         [SerializeField] private Color imageColorZoomUp;
         
         [SerializeField] private float durationZoomUp;
-        
+
         public IObservable<Unit> OnPointerEnter =>
             observableEventTrigger.OnPointerEnterAsObservable().AsUnitObservable();
 
         public IObservable<Unit> OnPointerExit =>
             observableEventTrigger.OnPointerExitAsObservable().AsUnitObservable();
-        
+
         private bool _isSelected;
 
         private Color _currentColor;
         private Sequence _sequenceZoomUp;
-        
+
         private void Reset()
         {
             image = GetComponent<Image>();
@@ -48,18 +46,13 @@ namespace Views.Instances
         private void Start()
         {
             _currentColor = imageColor;
-            image.color =  imageColor;
-            image.rectTransform.localScale = Vector3.one;
-            textMeshProMain.color =  imageColor;
-            textMeshProDetails.color =  imageColor;
         }
 
-        public void ChangeTexts(LocaleKey localeKey, LocaleKey localeKeyDetails)
+        public void ChangeText(LocaleKey localeKey)
         {
-            textMeshProMain.text = Localize.LocaleString(localeKey);
-            textMeshProDetails.text = Localize.LocaleString(localeKeyDetails);
+            textMeshPro.text = Localize.LocaleString(localeKey);
         }
-
+        
         public void ZoomUp(bool isSelected)
         {
             if (_isSelected == isSelected)
@@ -80,8 +73,7 @@ namespace Views.Instances
                     .OnUpdate(() =>
                     {
                         image.color = _currentColor;
-                        textMeshProMain.color = _currentColor;
-                        textMeshProDetails.color = _currentColor;
+                        textMeshPro.color = _currentColor;
                     })
                     .OnComplete(() =>
                     {

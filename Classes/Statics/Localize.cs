@@ -18,6 +18,10 @@ namespace Classes.Statics
             {
                 if (obj is LocaleKey localeKey)
                 {
+                    if (localeKey == LocaleKey.None)
+                    {
+                        continue;
+                    }
                     _dictionary.Add(localeKey, localeKey.ToString());
                 }
             }

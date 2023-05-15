@@ -115,14 +115,14 @@ namespace Views
 
         public void ChangeImageButtonTexts()
         {
-            imageButtonGameStart.ChangeText("GameStart");
-            imageButtonTutorial.ChangeText("Tutorial");
-            imageButtonInstruction.ChangeText("Instruction");
-            imageButtonSettings.ChangeText("Settings");
-            imageButtonRecords.ChangeText("Records");
-            imageButtonAchievements.ChangeText("Achievements");
-            imageButtonCredits.ChangeText("Credits");
-            imageButtonQuit.ChangeText("Quit");
+            imageButtonGameStart.ChangeText(LocaleKey.GameStart);
+            imageButtonTutorial.ChangeText(LocaleKey.Tutorial);
+            imageButtonInstruction.ChangeText(LocaleKey.Instruction);
+            imageButtonSettings.ChangeText(LocaleKey.Settings);
+            imageButtonRecords.ChangeText(LocaleKey.Records);
+            imageButtonAchievements.ChangeText(LocaleKey.Achievements);
+            imageButtonCredits.ChangeText(LocaleKey.Credits);
+            imageButtonQuit.ChangeText(LocaleKey.Quit);
         }
 
         public void ResizeButtons()

@@ -146,10 +146,7 @@ namespace Views
                     endPositionY = 0.5f,
                     duration = 2.0f,
                     materialType = TextEffectMaterialType.NoPlace,
-                    text = "<size=0.8>" +
-                           LocalizationSettings.StringDatabase.GetLocalizedString(Const.LocalizationStrings,
-                               "NoPlace") +
-                           "</size>"
+                    text = "<size=0.8>" + Localize.LocaleString(LocaleKey.NoPlace) + "</size>"
                 });
         }
     }

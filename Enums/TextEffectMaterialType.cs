@@ -9,9 +9,4 @@ namespace Enums
         ElectricAlternating,
         NoPlace
     }
-
-    public enum LocaleKey
-    {
-        
-    }
 }

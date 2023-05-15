@@ -18,6 +18,7 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<ScoreModel>(Lifetime.Singleton);
         builder.Register<SelectedBoardCellModel>(Lifetime.Singleton);
         builder.Register<SelectedHeaderButtonModel>(Lifetime.Singleton);
+        builder.Register<SelectedResultScreenButtonModel>(Lifetime.Singleton);
         builder.Register<SelectedSelectFrameSizeScreenButtonModel>(Lifetime.Singleton);
         builder.Register<SelectedTitleScreenButtonModel>(Lifetime.Singleton);
         builder.Register<TileDeckModel>(Lifetime.Singleton);
@@ -30,10 +31,11 @@ public class GameLifetimeScope : LifetimeScope
         builder.RegisterComponentInHierarchy<BoardCellDetector>();
         builder.RegisterComponentInHierarchy<BoardCellPointer>();
         builder.RegisterComponentInHierarchy<CurrentTilePositionDetector>();
+        builder.RegisterComponentInHierarchy<DeskFactory>();
         builder.RegisterComponentInHierarchy<Footer>();
         builder.RegisterComponentInHierarchy<Header>();
         builder.RegisterComponentInHierarchy<MainCamera>();
-        builder.RegisterComponentInHierarchy<DeskFactory>();
+        builder.RegisterComponentInHierarchy<ResultScreen>();
         builder.RegisterComponentInHierarchy<SelectFrameSizeScreen>();
         builder.RegisterComponentInHierarchy<TextEffectFactory>();
         builder.RegisterComponentInHierarchy<TileFactory>();
@@ -53,6 +55,7 @@ public class GameLifetimeScope : LifetimeScope
         builder.Register<ReturnToTitleProcess>(Lifetime.Singleton);
         builder.Register<SelectBoardCellProcess>(Lifetime.Singleton);
         builder.Register<SelectHeaderButtonProcess>(Lifetime.Singleton);
+        builder.Register<SelectResultScreenButtonProcess>(Lifetime.Singleton);
         builder.Register<SelectSelectFrameSizeScreenProcess>(Lifetime.Singleton);
         builder.Register<SelectTitleScreenButtonProcess>(Lifetime.Singleton);
         builder.Register<ShowUpTitleScreenProcess>(Lifetime.Singleton);
@@ -71,10 +74,12 @@ public class GameLifetimeScope : LifetimeScope
         builder.RegisterEntryPoint<OnGameStart>();
         builder.RegisterEntryPoint<OnMouseButtonLeftPressedForPutCurrentTile>();
         builder.RegisterEntryPoint<OnMouseButtonLeftPressedForSelectHeader>();
+        builder.RegisterEntryPoint<OnMouseButtonLeftPressedForSelectResultScreen>();
         builder.RegisterEntryPoint<OnMouseButtonLeftPressedForSelectTitleScreen>();
         builder.RegisterEntryPoint<OnMouseButtonLeftPressedForSelectSelectFrameSizeScreen>();
         builder.RegisterEntryPoint<OnMouseButtonRightPressedForRotateCurrentTile>();
         builder.RegisterEntryPoint<OnPointerEventsFiredHeader>();
+        builder.RegisterEntryPoint<OnPointerEventsFiredResultScreen>();
         builder.RegisterEntryPoint<OnPointerEventsFiredSelectFrameSizeScreen>();
         builder.RegisterEntryPoint<OnPointerEventsFiredTitleScreen>();
     }
