@@ -12,4 +12,5 @@ https://github.com/AkioMabuchi/IlluminateFrameScripts/assets/38254498/6cedefec-b
 
 ## 設計思想
 MVPやMVVMから発展させた独自の設計思想です。この思想とUniRx、Vcontainerを用いることによって無駄の少ない疎結合を可能にします。
+
 ![設計思想](https://github.com/AkioMabuchi/IlluminateFrameScripts/assets/38254498/0ce3c0c4-4387-4ae7-9dd7-65ad0cf71274)
