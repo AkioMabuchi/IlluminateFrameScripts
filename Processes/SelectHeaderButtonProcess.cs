@@ -16,11 +16,18 @@ namespace Processes
         private readonly Footer _footer;
         private readonly TitleScreen _titleScreen;
         private readonly SelectFrameSizeScreen _selectFrameSizeScreen;
+        private readonly InstructionScreen _instructionScreen;
+        private readonly SettingsScreen _settingsScreen;
+        private readonly RecordsScreen _recordsScreen;
+        private readonly AchievementsScreen _achievementsScreen;
+        private readonly CreditsScreen _creditsScreen;
 
         [Inject]
         public SelectHeaderButtonProcess(GameStateModel gameStateModel,
             SelectedHeaderButtonModel selectedHeaderButtonModel, Header header, Footer footer, TitleScreen titleScreen,
-            SelectFrameSizeScreen selectFrameSizeScreen)
+            SelectFrameSizeScreen selectFrameSizeScreen, InstructionScreen instructionScreen,
+            SettingsScreen settingsScreen, RecordsScreen recordsScreen, AchievementsScreen achievementsScreen,
+            CreditsScreen creditsScreen)
         {
             _gameStateModel = gameStateModel;
 
@@ -29,6 +36,11 @@ namespace Processes
             _footer = footer;
             _titleScreen = titleScreen;
             _selectFrameSizeScreen = selectFrameSizeScreen;
+            _instructionScreen = instructionScreen;
+            _settingsScreen = settingsScreen;
+            _recordsScreen = recordsScreen;
+            _achievementsScreen = achievementsScreen;
+            _creditsScreen = creditsScreen;
         }
 
         public void SelectProcess(HeaderButtonName headerButtonName)
@@ -63,17 +75,57 @@ namespace Processes
             {
                 case HeaderButtonName.Return:
                 {
-                    _gameStateModel.SetGameStateName(GameStateName.None);
-                    _header.PullUp();
-                    _footer.PullDown();
-                    _selectFrameSizeScreen.FadeOut();
+                    switch (_gameStateModel.GameStateName)
+                    {
+                        case GameStateName.SelectFrameSize:
+                        {
+                            _gameStateModel.SetGameStateName(GameStateName.None);
+                            _header.PullUp();
+                            _footer.PullDown();
+                            _selectFrameSizeScreen.FadeOut();
 
-                    await UniTask.Delay(TimeSpan.FromSeconds(1.0));
+                            await UniTask.Delay(TimeSpan.FromSeconds(1.0));
 
-                    _gameStateModel.SetGameStateName(GameStateName.Title);
-                    _titleScreen.FadeIn();
-                    _titleScreen.ChangeImageButtonTexts();
-                    _titleScreen.ResizeButtons();
+                            _gameStateModel.SetGameStateName(GameStateName.Title);
+                            _titleScreen.FadeIn();
+                            _titleScreen.ChangeTexts();
+                            _titleScreen.ResizeButtons();
+                            break;
+                        }
+                        case GameStateName.Settings:
+                        {
+                            _gameStateModel.SetGameStateName(GameStateName.None);
+                            _header.PullUp();
+                            _footer.PullDown();
+                            _settingsScreen.FadeOut();
+                            
+                            await UniTask.Delay(TimeSpan.FromSeconds(1.0));
+
+                            _gameStateModel.SetGameStateName(GameStateName.Title);
+                            _titleScreen.FadeIn();
+                            _titleScreen.ChangeTexts();
+                            _titleScreen.ResizeButtons();
+                            
+                            break;
+                        }
+                        case GameStateName.Records:
+                        {
+                            _gameStateModel.SetGameStateName(GameStateName.None);
+                            _header.PullUp();
+                            _footer.PullDown();
+                            _recordsScreen.FadeOut();
+
+                            await UniTask.Delay(TimeSpan.FromSeconds(1.0));
+
+                            _gameStateModel.SetGameStateName(GameStateName.Title);
+                            _titleScreen.FadeIn();
+                            _titleScreen.ChangeTexts();
+                            _titleScreen.ResizeButtons();
+                            
+                            break;
+                        }
+                    }
+
                     break;
                 }
             }

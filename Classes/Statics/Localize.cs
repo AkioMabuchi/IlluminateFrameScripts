@@ -8,7 +8,7 @@ namespace Classes.Statics
 {
     public static class Localize
     {
-        private const string TableName = "LocalizationStrings";
+        public const string TableName = "LocalizationStrings";
         private static readonly Dictionary<LocaleKey, string> _dictionary = new();
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]

@@ -3,6 +3,11 @@ namespace Enums
     public enum HeaderHeadingText
     {
         None,
-        SelectFrameSize
+        SelectFrameSize,
+        Instruction,
+        Settings,
+        Records,
+        Achievements,
+        Credits
     }
 }

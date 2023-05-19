@@ -41,6 +41,11 @@ namespace Views
             textMeshProHeading.text = Localize.LocaleString(headingText switch
             {
                 HeaderHeadingText.SelectFrameSize => LocaleKey.HeaderSelectFrameSize,
+                HeaderHeadingText.Instruction => LocaleKey.Instruction,
+                HeaderHeadingText.Settings => LocaleKey.Settings,
+                HeaderHeadingText.Records => LocaleKey.Records,
+                HeaderHeadingText.Achievements => LocaleKey.Achievements,
+                HeaderHeadingText.Credits => LocaleKey.Credits,
                 _ => LocaleKey.None
             });
         }

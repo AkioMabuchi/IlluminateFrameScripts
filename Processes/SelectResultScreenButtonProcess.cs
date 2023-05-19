@@ -1,9 +1,9 @@
 using Enums;
-using UnityEngine;
+using Models;
 using VContainer;
 using Views;
 
-namespace Models
+namespace Processes
 {
     public class SelectResultScreenButtonProcess
     {

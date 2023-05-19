@@ -113,7 +113,7 @@ namespace Views
             canvasGroup.DOFade(0.0f, 1.0f).SetEase(Ease.InOutSine).SetLink(gameObject);
         }
 
-        public void ChangeImageButtonTexts()
+        public void ChangeTexts()
         {
             imageButtonGameStart.ChangeText(LocaleKey.GameStart);
             imageButtonTutorial.ChangeText(LocaleKey.Tutorial);

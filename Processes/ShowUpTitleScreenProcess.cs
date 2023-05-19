@@ -20,7 +20,8 @@ namespace Processes
         public void ShowUpTitleScreen()
         {
             _gameStateModel.SetGameStateName(GameStateName.Title);
-            _titleScreen.ChangeImageButtonTexts();
+            _titleScreen.ChangeTexts();
+            _titleScreen.ResizeButtons();
             _titleScreen.ShowUp();
         }
         

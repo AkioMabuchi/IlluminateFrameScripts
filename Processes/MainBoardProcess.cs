@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using Enums;
 using Models;
 using UnityEngine;
 using VContainer;
@@ -15,6 +16,8 @@ namespace Processes
         private readonly NextTileModel _nextTileModel;
         private readonly ValidCellPositionsModel _validCellPositionsModel;
 
+        private readonly Footer _footer;
+
         private readonly BannerShorted _bannerShorted;
         private readonly BannerClosed _bannerClosed;
         
@@ -24,6 +27,7 @@ namespace Processes
         private readonly AddScoreProcess _addScoreProcess;
         private readonly ConductMainBoardProcess _conductMainBoardProcess;
         private readonly DecreaseTileRestAmountProcess _decreaseTileRestAmountProcess;
+        private readonly EndMainGameProcess _endMainGameProcess;
         private readonly TakeTileProcess _takeTileProcess;
         private readonly PrepareNextTileProcess _prepareNextTileProcess;
         private readonly UpdateValidCellPositionsProcess _updateValidCellPositionsProcess;
@@ -31,12 +35,13 @@ namespace Processes
 
         [Inject]
         public MainBoardProcess(TilesModel tilesModel, TileDeckModel tileDeckModel,
-            TileRestAmountModel tileRestAmountModel,
-            NextTileModel nextTileModel, ValidCellPositionsModel validCellPositionsModel, BannerShorted bannerShorted,
-            BannerClosed bannerClosed, TextEffectFactory textEffectFactory, TileFactory tileFactory,
-            AddScoreProcess addScoreProcess, ConductMainBoardProcess conductMainBoardProcess,
-            DecreaseTileRestAmountProcess decreaseTileRestAmountProcess, TakeTileProcess takeTileProcess,
-            PrepareNextTileProcess prepareNextTileProcess, IlluminateBoardProcess illuminateBoardProcess,
+            TileRestAmountModel tileRestAmountModel, NextTileModel nextTileModel,
+            ValidCellPositionsModel validCellPositionsModel, Footer footer, BannerShorted bannerShorted, BannerClosed bannerClosed,
+            TextEffectFactory textEffectFactory, TileFactory tileFactory, AddScoreProcess addScoreProcess,
+            ConductMainBoardProcess conductMainBoardProcess,
+            DecreaseTileRestAmountProcess decreaseTileRestAmountProcess, EndMainGameProcess endMainGameProcess,
+            TakeTileProcess takeTileProcess, PrepareNextTileProcess prepareNextTileProcess,
+            IlluminateBoardProcess illuminateBoardProcess,
             UpdateValidCellPositionsProcess updateValidCellPositionsProcess)
         {
             _nextTileModel = nextTileModel;
@@ -45,6 +50,7 @@ namespace Processes
             _tileRestAmountModel = tileRestAmountModel;
             _validCellPositionsModel = validCellPositionsModel;
 
+            _footer = footer;
             _bannerShorted = bannerShorted;
             _bannerClosed = bannerClosed;
             _textEffectFactory = textEffectFactory;
@@ -53,6 +59,8 @@ namespace Processes
             _addScoreProcess = addScoreProcess;
             _conductMainBoardProcess = conductMainBoardProcess;
             _decreaseTileRestAmountProcess = decreaseTileRestAmountProcess;
+            _endMainGameProcess = endMainGameProcess;
+            
             _takeTileProcess = takeTileProcess;
             _illuminateBoardProcess = illuminateBoardProcess;
             _prepareNextTileProcess = prepareNextTileProcess;
@@ -76,27 +84,38 @@ namespace Processes
                 _addScoreProcess.AddScore(totalScore);
             }
 
+            // 短絡で終了
             if (boardConductionResult.isCircuitShorted)
             {
+                _footer.ChangeFootingText(FooterFootingText.None);
                 _bannerShorted.Show();
                 await UniTask.Delay(TimeSpan.FromSeconds(5.0));
                 _bannerShorted.FadeOut();
+                await UniTask.Delay(TimeSpan.FromSeconds(2.0));
+                await _endMainGameProcess.EndMainGame();
+                
                 return;
             }
 
             await _illuminateBoardProcess.IlluminateBoard(boardConductionResult.illuminatePaths);
 
+            // タイルがなくなり終了
             if (_tileRestAmountModel.IsRunOUt)
             {
-                Debug.Log("終了");
+                _footer.ChangeFootingText(FooterFootingText.None);
+                await _endMainGameProcess.EndMainGame();
                 return;
             }
 
+            // 回路が閉鎖して終了する
             if (boardConductionResult.isCircuitClosed)
             {
+                _footer.ChangeFootingText(FooterFootingText.None);
                 _bannerClosed.ShowUp();
                 await UniTask.Delay(TimeSpan.FromSeconds(7.0));
                 _bannerClosed.FadeOut();
+                await UniTask.Delay(TimeSpan.FromSeconds(3.0));
+                await _endMainGameProcess.EndMainGame();
                 return;
             }
 
@@ -120,7 +139,9 @@ namespace Processes
                     _tileFactory.ThrowNextTile();
                     if (_tileRestAmountModel.IsRunOUt)
                     {
-                        Debug.Log("最後が配置不能タイルだったため、終了");
+                        // 配置不可能になって、終了
+                        _footer.ChangeFootingText(FooterFootingText.None);
+                        await _endMainGameProcess.EndMainGame();
                         return;
                     }
 
@@ -137,9 +158,11 @@ namespace Processes
                             _prepareNextTileProcess.PrepareNextTile(_tilesModel.AddTile(_tileDeckModel.TakeTile()));
                         }
                     }
+                    // 残りのタイルも配置不可能で終了
                     else
                     {
-                        Debug.Log("残りのも配置不可能");
+                        _footer.ChangeFootingText(FooterFootingText.None);
+                        await _endMainGameProcess.EndMainGame();
                     }
                 }
             }

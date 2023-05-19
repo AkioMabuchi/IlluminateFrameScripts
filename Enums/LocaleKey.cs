@@ -24,5 +24,7 @@ namespace Enums
         SelectFrameSizeLarge,
         FooterMainGame,
         NoPlace,
+        BlackScreenNoSteam,
+        BlackScreenNoLicense,
     }
 }

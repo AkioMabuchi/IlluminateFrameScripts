@@ -3,6 +3,7 @@ namespace Enums
     public enum GameStateName
     {
         None,
+        Invalid,
         Title,
         SelectFrameSize,
         Main,
@@ -10,6 +11,7 @@ namespace Enums
         ResultRecords,
         Tutorial,
         Instruction,
+        Settings,
         Records,
         Achievements,
         Credits

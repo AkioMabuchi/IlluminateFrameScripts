@@ -40,6 +40,10 @@ namespace Views
             }
         }
 
+        public void ChangeVolume(float volume)
+        {
+            audioSource.volume = volume;
+        }
         public void PlaySound(params SoundName[] soundNames)
         {
             var soundName = soundNames[UnityEngine.Random.Range(0, soundNames.Length)];

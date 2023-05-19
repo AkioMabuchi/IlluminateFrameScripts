@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.IO;
-using UnityEditor;
-using UnityEditor.Localization;
 using UnityEngine;
 
 namespace ForDevelopments
 {
     public class GenerateLocaleEnums : MonoBehaviour
     {
-        [SerializeField] private StringTableCollection stringTableCollection;
-        
+#if UNITY_EDITOR
+        [SerializeField] private UnityEditor.Localization.StringTableCollection stringTableCollection;
+
         [ContextMenu("Generate Locale Key Enums")]
         private void GenerateLocaleKeyEnums()
         {
+
             var hashSet = new HashSet<string>();
-            
+
             foreach (var stringTable in stringTableCollection.StringTables)
             {
                 foreach (var stringTableEntry in stringTable.Values)
@@ -37,7 +37,9 @@ namespace ForDevelopments
                     "}";
 
             File.WriteAllText("Assets/Scripts/Enums/LocaleKey.cs", code);
-            AssetDatabase.Refresh();
+            UnityEditor.AssetDatabase.Refresh();
+
         }
+#endif
     }
 }
