@@ -23,9 +23,9 @@ namespace Presenters
         {
             _tileRestAmountModel.OnChangedTileRestAmount.Subscribe(tileRestAmount =>
             {
-                if (_tileRestAmountBoardFactory.TileRestAmountBoard)
+                if (_tileRestAmountBoardFactory.TileRestAmount)
                 {
-                    _tileRestAmountBoardFactory.TileRestAmountBoard.SetDisplayNumber(tileRestAmount);
+                    _tileRestAmountBoardFactory.TileRestAmount.SetDisplayNumber(tileRestAmount);
                 }
             });
         }

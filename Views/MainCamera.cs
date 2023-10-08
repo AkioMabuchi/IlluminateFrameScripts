@@ -22,6 +22,11 @@ namespace Views
             mainCamera = GetComponent<Camera>();
         }
 
+        private void Start()
+        {
+            mainCamera.transform.eulerAngles = Vector3.zero;
+        }
+
         public void Move(FrameSize frameSize)
         {
             transform.position = frameSize switch

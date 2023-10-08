@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Enums;
-using ScriptableObjects;
 using UnityEngine;
 
 namespace Views
@@ -10,51 +6,100 @@ namespace Views
     public class SoundPlayer : MonoBehaviour
     {
         [SerializeField] private AudioSource audioSource;
-        [SerializeField] private ScriptableObjectSounds scriptableObjectSounds;
 
-        private readonly Dictionary<SoundName, AudioClip> _dictionarySounds = new();
+        [SerializeField] private AudioClip audioClipTest;
+        [SerializeField] private AudioClip audioClipSelect;
+        [SerializeField] private AudioClip audioClipDecide;
+        [SerializeField] private AudioClip audioClipRotateTile;
+        [SerializeField] private AudioClip audioClipPutTile;
+        [SerializeField] private AudioClip audioClipConductLine;
+        [SerializeField] private AudioClip[] audioClipsIlluminateLine;
+        [SerializeField] private AudioClip audioClipIlluminateLineMax;
+        [SerializeField] private AudioClip audioClipIlluminateBulb;
+        [SerializeField] private AudioClip audioClipIlluminateTerminal;
+        [SerializeField] private AudioClip audioClipIlluminateFrame;
+        [SerializeField] private AudioClip audioClipShorted;
+        [SerializeField] private AudioClip audioClipFatal;
+        [SerializeField] private AudioClip audioClipBadElectric;
+        
         private void Reset()
         {
             audioSource = GetComponent<AudioSource>();
-        }
-
-        private void Awake()
-        {
-            foreach (var audioClip in scriptableObjectSounds.AudioClips)
-            {
-                if (Enum.TryParse(audioClip.name, out SoundName soundName))
-                {
-                    if (_dictionarySounds.ContainsKey(soundName))
-                    {
-                        Debug.LogWarning("すでに登録されているサウンド名があります" + audioClip.name);
-                    }
-                    else
-                    {
-                        _dictionarySounds.Add(soundName, audioClip);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Enum化できないAudioClipが含まれています。Sound名とEnum名が一致しているか確認してください" + audioClip.name);
-                }
-            }
         }
 
         public void ChangeVolume(float volume)
         {
             audioSource.volume = volume;
         }
-        public void PlaySound(params SoundName[] soundNames)
+
+        public void PlayTestSound()
         {
-            var soundName = soundNames[UnityEngine.Random.Range(0, soundNames.Length)];
-            if (_dictionarySounds.TryGetValue(soundName, out var audioClip))
+            audioSource.PlayOneShot(audioClipTest);
+        }
+
+        public void PlaySelectSound()
+        {
+            audioSource.PlayOneShot(audioClipSelect);
+        }
+
+        public void PlayDecideSound()
+        {
+            audioSource.PlayOneShot(audioClipDecide);
+        }
+        public void PlayRotateTileSound()
+        {
+            audioSource.PlayOneShot(audioClipRotateTile);
+        }
+
+        public void PlayPutTileSound()
+        {
+            audioSource.PlayOneShot(audioClipPutTile);
+        }
+        public void PlayConductLineSound()
+        {
+            audioSource.PlayOneShot(audioClipConductLine);
+        }
+
+        public void PlayIlluminateLineSound(int lineCount)
+        {
+            if (lineCount < audioClipsIlluminateLine.Length)
             {
-                audioSource.PlayOneShot(audioClip);
+                audioSource.PlayOneShot(audioClipsIlluminateLine[lineCount]);
             }
             else
             {
-                Debug.LogWarning("サウンド名が登録されていません" + soundName);
+                audioSource.PlayOneShot(audioClipIlluminateLineMax);
             }
+        }
+
+        public void PlayIlluminateBulbSound()
+        {
+            audioSource.PlayOneShot(audioClipIlluminateBulb);
+        }
+
+        public void PlayIlluminateTerminalSound()
+        {
+            audioSource.PlayOneShot(audioClipIlluminateTerminal);
+        }
+
+        public void PlayIlluminateFrameSound()
+        {
+            audioSource.PlayOneShot(audioClipIlluminateFrame);
+        }
+
+        public void PlayShortedSound()
+        {
+            audioSource.PlayOneShot(audioClipShorted);
+        }
+
+        public void PlayFatalSound()
+        {
+            audioSource.PlayOneShot(audioClipFatal);
+        }
+
+        public void PlayBadElectricSound()
+        {
+            audioSource.PlayOneShot(audioClipBadElectric);
         }
     }
 }

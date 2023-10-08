@@ -9,13 +9,15 @@ namespace Presenters
     {
         private readonly ScoreModel _scoreModel;
         private readonly TileRestAmountModel _tileRestAmountModel;
-        private readonly DeskFactory _deskFactory;
+        
+        private readonly Desk _desk;
 
-        public DeskPresenter(ScoreModel scoreModel, TileRestAmountModel tileRestAmountModel, DeskFactory deskFactory)
+        public DeskPresenter(ScoreModel scoreModel, TileRestAmountModel tileRestAmountModel, Desk desk)
         {
             _scoreModel = scoreModel;
             _tileRestAmountModel = tileRestAmountModel;
-            _deskFactory = deskFactory;
+
+            _desk = desk;
         }
 
 
@@ -23,12 +25,12 @@ namespace Presenters
         {
             _scoreModel.OnChangedScore.Subscribe(score =>
             {
-                _deskFactory.SetScoreDisplayNumber(score);
+                _desk.ValueDisplayScore.SetDisplayNumber(score);
             });
 
             _tileRestAmountModel.OnChangedTileRestAmount.Subscribe(tileRestAmount =>
             {
-                _deskFactory.SetTileRestAmountDisplayNumber(tileRestAmount);
+                _desk.ValueDisplayTileRestAmount.SetDisplayNumber(tileRestAmount);
             });
         }
     }

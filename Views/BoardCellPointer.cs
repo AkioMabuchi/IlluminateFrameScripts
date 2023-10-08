@@ -1,5 +1,6 @@
-using Classes.Statics;
 using Enums;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Views
@@ -9,37 +10,53 @@ namespace Views
     {
         [SerializeField] private MeshRenderer meshRenderer;
 
+        [SerializeField] private float tileSize;
         [SerializeField] private Vector3 basePositionSmall;
         [SerializeField] private Vector3 basePositionMedium;
         [SerializeField] private Vector3 basePositionLarge;
         
-        private Vector3 _currentBasePosition = Vector3.zero;
+        private FrameSize _frameSize;
+        private Vector2Int? _nullableCellPosition;
         
         private void Reset()
         {
             meshRenderer = GetComponent<MeshRenderer>();
         }
 
-        public void SetBasePosition(FrameSize frameSize)
+        private void Awake()
         {
-            _currentBasePosition = frameSize switch
-            {
-                FrameSize.Small => basePositionSmall,
-                FrameSize.Medium => basePositionMedium,
-                FrameSize.Large => basePositionLarge,
-                _ => Vector3.zero
-            };
-        }
-        public void EnableMeshRenderer(bool isEnabled)
-        {
-            meshRenderer.enabled = isEnabled;
+            this.UpdateAsObservable()
+                .Subscribe(_ =>
+                {
+                    if (_nullableCellPosition.HasValue)
+                    {
+                        var cellPosition = _nullableCellPosition.Value;
+                        transform.position =
+                            new Vector3(cellPosition.x * tileSize, 0.0f, cellPosition.y * tileSize) +
+                            _frameSize switch
+                            {
+                                FrameSize.Small => basePositionSmall,
+                                FrameSize.Medium => basePositionMedium,
+                                FrameSize.Large => basePositionLarge,
+                                _ => Vector3.zero
+                            };
+                        meshRenderer.enabled = true;
+                    }
+                    else
+                    {
+                        meshRenderer.enabled = false;
+                    }
+                }).AddTo(gameObject);
         }
 
-        public void MoveToCellPosition(Vector2 cellPosition)
+        public void SetFrameSize(FrameSize frameSize)
         {
-            transform.position =
-                new Vector3(cellPosition.x * Const.TileSize, 0.0f, cellPosition.y * Const.TileSize) +
-                _currentBasePosition;
+            _frameSize = frameSize;
+        }
+
+        public void SetNullableCellPosition(Vector2Int? nullableCellPosition)
+        {
+            _nullableCellPosition = nullableCellPosition;
         }
     }
 }

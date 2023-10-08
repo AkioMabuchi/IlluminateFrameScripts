@@ -1,6 +1,12 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using EnhancedUI.EnhancedScroller;
+using Enums;
 using Structs;
+using TMPro;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 
 namespace Views.Instances
@@ -11,10 +17,12 @@ namespace Views.Instances
         [SerializeField] private EnhancedScroller enhancedScroller;
 
         [SerializeField] private CellViewRecord prefabCellViewRecord;
-
+        
         [SerializeField] private float cellViewRecordHeight;
+        [SerializeField] private float loadingCycle;
 
         private readonly List<CellViewRecordParamsGroup> _recordParamsGroups = new();
+        
         private void Reset()
         {
             enhancedScroller = GetComponent<EnhancedScroller>();
@@ -25,13 +33,23 @@ namespace Views.Instances
             enhancedScroller.Delegate = this;
         }
 
+        public void ClearRecords()
+        {
+            _recordParamsGroups.Clear();
+        }
         public void SetRecords(IEnumerable<CellViewRecordParamsGroup> recordParamsGroups)
         {
             _recordParamsGroups.Clear();
+            
             foreach (var recordParamsGroup in recordParamsGroups)
             {
                 _recordParamsGroups.Add(recordParamsGroup);
             }
+        }
+
+        public void Render()
+        {
+            enhancedScroller.ReloadData();
         }
         public int GetNumberOfCells(EnhancedScroller scroller)
         {

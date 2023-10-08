@@ -6,11 +6,6 @@ namespace Enums
         Normal,
         Plus,
         Minus,
-        Alternating,
-        NormalIlluminate,
-        PlusIlluminate,
-        MinusIlluminate,
-        AlternatingIlluminate,
-        Shorted
+        Alternating
     }
 }

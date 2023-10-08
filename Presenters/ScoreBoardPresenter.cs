@@ -22,9 +22,9 @@ namespace Presenters
         {
             _scoreModel.OnChangedScore.Subscribe(score =>
             {
-                if (_scoreBoardFactory.ScoreBoard)
+                if (_scoreBoardFactory.Score)
                 {
-                    _scoreBoardFactory.ScoreBoard.SetDisplayNumber(score);
+                    _scoreBoardFactory.Score.SetDisplayNumber(score);
                 }
             });
         }

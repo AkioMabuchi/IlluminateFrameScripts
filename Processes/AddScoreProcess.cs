@@ -7,19 +7,19 @@ namespace Processes
     public class AddScoreProcess
     {
         private readonly ScoreModel _scoreModel;
-        private readonly DeskFactory _deskFactory;
+        private readonly Desk _desk;
 
         [Inject]
-        public AddScoreProcess(ScoreModel scoreModel, DeskFactory deskFactory)
+        public AddScoreProcess(ScoreModel scoreModel, Desk desk)
         {
             _scoreModel = scoreModel;
-            _deskFactory = deskFactory;
+            _desk = desk;
         }
 
         public void AddScore(int score)
         {
             _scoreModel.AddScore(score);
-            _deskFactory.Desk.DisplayScoreTween();
+            _desk.ValueDisplayScore.Draw();
         }
     }
 }

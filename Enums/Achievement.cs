@@ -1,0 +1,43 @@
+namespace Enums
+{
+    public enum Achievement
+    {
+        None,
+        TutorialCompleted,
+        FirstSmall,
+        FirstMedium,
+        FirstLarge,
+        IlluminatedSmall,
+        IlluminatedMedium,
+        IlluminatedLarge,
+        ClosedSmall,
+        ClosedMedium,
+        ClosedLarge,
+        ShortedMedium,
+        ShortedLarge,
+        FatalCircuit,
+        GreatSmall,
+        GreatMedium,
+        GreatLarge,
+        ExcellentSmall,
+        ExcellentMedium,
+        ExcellentLarge,
+        LongLineSmall,
+        LongLineMedium,
+        LongLineLarge,
+        OdysseySmall,
+        OdysseyMedium,
+        OdysseyLarge,
+        GloomySmall,
+        GloomyMedium,
+        GloomyLarge,
+        RadiantSmall,
+        RadiantMedium,
+        RadiantLarge,
+        Illuminated100Smalls,
+        Illuminated100Mediums,
+        Illuminated100Larges,
+        Played100Times,
+        Played1000Times
+    }
+}

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Structs
 {
-    public struct IlluminatePath
+    public struct CircuitPath
     {
         public ElectricStatus electricStatus;
         public Vector2Int cellPosition;

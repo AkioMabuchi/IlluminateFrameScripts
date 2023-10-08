@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Enums;
+using Interfaces.TileModels;
+using Models.Instances.Tiles;
 using UniRx;
 using UnityEngine;
 
@@ -12,36 +14,50 @@ namespace Models
 
         public IEnumerable<TileType> ValidTiles => _reactiveDictionaryValidCellPositions.Keys;
 
-        public void ClearValidCellPositions()
-        {
-            _reactiveDictionaryValidCellPositions.Clear();
-        }
-
-        public void SetValidCellPositions(TileType tileType,
-            IReadOnlyDictionary<Vector2Int, HashSet<RotateStatus>> validCellPositions)
-        {
-            _reactiveDictionaryValidCellPositions.Add(tileType, validCellPositions);
-        }
-
         public bool CanPutTileType(TileType tileType)
         {
             return _reactiveDictionaryValidCellPositions.ContainsKey(tileType);
         }
 
-        public bool CanPutTile(TileType tileType, RotateStatus rotateStatus, Vector2Int cellPosition)
+        public bool CanPutTile(TileModelBase tileModel, Vector2Int cellPosition)
         {
-            if(_reactiveDictionaryValidCellPositions.TryGetValue(tileType, out var dictionary))
+            if (tileModel is ICheckableValidTileModel checkableValidTileModel)
             {
-                if( dictionary.TryGetValue(cellPosition, out var cellPositions))
+                var tileType = checkableValidTileModel.TileType;
+                var rotateStatus = checkableValidTileModel.RotateStatus;
+
+                if (_reactiveDictionaryValidCellPositions.TryGetValue(tileType, out var dictionary))
                 {
-                    if (cellPositions.Contains(rotateStatus))
+                    if (dictionary.TryGetValue(cellPosition, out var cellPositions))
                     {
-                        return true;
+                        if (cellPositions.Contains(rotateStatus))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
 
             return false;
+        }
+
+        public void SetValidCellPositions(
+            IReadOnlyDictionary<TileType, IReadOnlyDictionary<Vector2Int, IEnumerable<RotateStatus>>>
+                validCellPositions)
+        {
+            _reactiveDictionaryValidCellPositions.Clear();
+
+            foreach (var (tileType, value)in validCellPositions)
+            {
+                var dictionary = new Dictionary<Vector2Int, HashSet<RotateStatus>>();
+                foreach (var (cellPosition, rotateStatuses)in value)
+                {
+                    var hashSetRotateStatuses = new HashSet<RotateStatus>(rotateStatuses);
+                    dictionary.Add(cellPosition, hashSetRotateStatuses);
+                }
+
+                _reactiveDictionaryValidCellPositions.Add(tileType, dictionary);
+            }
         }
     }
 }

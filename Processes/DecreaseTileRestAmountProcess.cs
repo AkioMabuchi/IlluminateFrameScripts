@@ -6,18 +6,18 @@ namespace Processes
     public class DecreaseTileRestAmountProcess
     {
         private readonly TileRestAmountModel _tileRestAmountModel;
-        private readonly DeskFactory _deskFactory;
+        private readonly Desk _desk;
 
-        public DecreaseTileRestAmountProcess(TileRestAmountModel tileRestAmountModel, DeskFactory deskFactory)
+        public DecreaseTileRestAmountProcess(TileRestAmountModel tileRestAmountModel, Desk desk)
         {
             _tileRestAmountModel = tileRestAmountModel;
-            _deskFactory = deskFactory;
+            _desk = desk;
         }
 
         public void DecreaseTileRestAmount()
         {
             _tileRestAmountModel.DecreaseTileRestAmount();
-            _deskFactory.Desk.DisplayTileRestAmount();
+            _desk.ValueDisplayTileRestAmount.DrawImmediate();
         }
     }
 }

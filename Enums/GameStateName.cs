@@ -14,6 +14,8 @@ namespace Enums
         Settings,
         Records,
         Achievements,
-        Credits
+        Statistics,
+        Credits,
+        Licenses
     }
 }

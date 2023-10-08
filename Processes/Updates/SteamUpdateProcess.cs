@@ -1,5 +1,6 @@
 using Models;
 using Steamworks;
+using VContainer;
 using VContainer.Unity;
 
 namespace Processes.Updates
@@ -8,6 +9,7 @@ namespace Processes.Updates
     {
         private readonly SteamModel _steamModel;
 
+        [Inject]
         public SteamUpdateProcess(SteamModel steamModel)
         {
             _steamModel = steamModel;

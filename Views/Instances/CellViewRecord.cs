@@ -32,7 +32,7 @@ namespace Views.Instances
         
             textMeshProRank.text = paramsGroup.rank.ToString();
             textMeshProPlayerName.text = paramsGroup.playerName;
-            textMeshProScore.text = paramsGroup.score.ToString("N");
+            textMeshProScore.text = paramsGroup.score.ToString();
         }
     }
 }

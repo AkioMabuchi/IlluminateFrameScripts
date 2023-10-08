@@ -1,19 +1,20 @@
 using Enums;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Views.Instances;
 
 namespace Views
 {
     public class ScoreBoardFactory : MonoBehaviour
     {
-        [SerializeField] private NumberDisplayBoard prefabScoreBoard;
+        [FormerlySerializedAs("prefabScoreBoard")] [SerializeField] private ValueDisplay prefabScore;
         
         [SerializeField] private Vector3 generatePositionSmall;
         [SerializeField] private Vector3 generatePositionMedium;
         [SerializeField] private Vector3 generatePositionLarge;
         
-        private NumberDisplayBoard _scoreBoard;
-        public NumberDisplayBoard ScoreBoard => _scoreBoard;
+        private ValueDisplay _score;
+        public ValueDisplay Score => _score;
 
         public void GenerateScoreBoard(FrameSize frameSize)
         {
@@ -30,7 +31,7 @@ namespace Views
                 _ => Quaternion.identity
             };
 
-            _scoreBoard = Instantiate(prefabScoreBoard, position, rotation, transform);
+            _score = Instantiate(prefabScore, position, rotation, transform);
         }
     }
 }

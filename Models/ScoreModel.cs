@@ -7,8 +7,9 @@ namespace Models
     {
         private readonly ReactiveProperty<int> _reactivePropertyScore = new(0);
         public IObservable<int> OnChangedScore => _reactivePropertyScore;
+        public int Score => _reactivePropertyScore.Value;
 
-        public void ResetScore()
+        public void Reset()
         {
             _reactivePropertyScore.Value = 0;
         }

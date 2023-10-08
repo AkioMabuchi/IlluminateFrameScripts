@@ -1,22 +1,41 @@
-using System;
+using Models.Instances.Tiles;
 using UniRx;
 
 namespace Models
 {
     public class NextTileModel
     {
-        private readonly ReactiveProperty<int?> _reactivePropertyNextTileId = new(null);
-        public IObservable<int?> OnChangedNextTileId => _reactivePropertyNextTileId;
-        public int? NextTileId => _reactivePropertyNextTileId.Value;
+        private readonly ReactiveProperty<int?> _reactivePropertyTileId = new(null);
+        
+        private readonly ReactiveProperty<TileModelBase> _reactivePropertyTileModel = new(null);
+        public TileModelBase TileModel => _reactivePropertyTileModel.Value;
 
-        public void SetNextTileTid(int tileId)
+        public void SetTileId(int tileId)
         {
-            _reactivePropertyNextTileId.Value = tileId;
+            _reactivePropertyTileId.Value = tileId;
         }
 
-        public void ResetNextTileId()
+        public void SetTileModel(TileModelBase tileModelBase)
         {
-            _reactivePropertyNextTileId.Value = null;
+            _reactivePropertyTileModel.Value = tileModelBase;
+        }
+
+        public bool TryGetTileId(out int tileId)
+        {
+            if (_reactivePropertyTileId.Value.HasValue)
+            {
+                tileId = _reactivePropertyTileId.Value.Value;
+                return true;
+            }
+
+            tileId = default;
+            return false;
+        }
+
+        public void Reset()
+        {
+            _reactivePropertyTileId.Value = null;
+            _reactivePropertyTileModel.Value = null;
         }
     }
 }

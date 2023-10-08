@@ -1,28 +1,23 @@
+using System;
 using Models;
 using UniRx;
 using VContainer.Unity;
 using Views;
+using Views.Screens;
 
 namespace Presenters
 {
-    public class SettingsScreenPresenter : IInitializable
+    public class SettingsScreenPresenter : IInitializable, IDisposable
     {
-        private readonly CurrentResolutionCodeModel _currentResolutionCodeModel;
-        private readonly SettingsScreen _settingsScreen;
-
-        public SettingsScreenPresenter(CurrentResolutionCodeModel currentResolutionCodeModel,
-            SettingsScreen settingsScreen)
-        {
-            _currentResolutionCodeModel = currentResolutionCodeModel;
-            _settingsScreen = settingsScreen;
-        }
-        
+        private readonly CompositeDisposable _compositeDisposable = new();
         public void Initialize()
         {
-            _currentResolutionCodeModel.OnChangedCurrentResolutionCode.Subscribe(currentResolutionCode =>
-            {
-                _settingsScreen.SetCurrentResolutionCode(currentResolutionCode);
-            });
+
+        }
+
+        public void Dispose()
+        {
+            _compositeDisposable.Dispose();
         }
     }
 }

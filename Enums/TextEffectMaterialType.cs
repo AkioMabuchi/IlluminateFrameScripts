@@ -7,6 +7,6 @@ namespace Enums
         ElectricPlus,
         ElectricMinus,
         ElectricAlternating,
-        NoPlace
+        ElectricMixed
     }
 }

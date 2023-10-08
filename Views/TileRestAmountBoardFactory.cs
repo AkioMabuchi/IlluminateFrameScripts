@@ -1,19 +1,20 @@
 using Enums;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Views.Instances;
 
 namespace Views
 {
     public class TileRestAmountBoardFactory : MonoBehaviour
     {
-        [SerializeField] private NumberDisplayBoard prefabTileRestAmountBoard;
+        [FormerlySerializedAs("prefabTileRestAmountBoard")] [SerializeField] private ValueDisplay prefabTileRestAmount;
         
         [SerializeField] private Vector3 generatePositionSmall;
         [SerializeField] private Vector3 generatePositionMedium;
         [SerializeField] private Vector3 generatePositionLarge;
         
-        private NumberDisplayBoard _tileRestAmountBoard;
-        public NumberDisplayBoard TileRestAmountBoard => _tileRestAmountBoard;
+        private ValueDisplay _tileRestAmount;
+        public ValueDisplay TileRestAmount => _tileRestAmount;
 
         public void GenerateTileRestAmountBoard(FrameSize frameSize)
         {
@@ -30,7 +31,7 @@ namespace Views
                 _ => Quaternion.identity
             };
 
-            _tileRestAmountBoard = Instantiate(prefabTileRestAmountBoard, position, rotation, transform);
+            _tileRestAmount = Instantiate(prefabTileRestAmount, position, rotation, transform);
         }
     }
 }

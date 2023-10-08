@@ -62,7 +62,6 @@ namespace Views.Instances
                 TextEffectMaterialType.ElectricPlus => new Material(materialElectricPlus),
                 TextEffectMaterialType.ElectricMinus => new Material(materialElectricMinus),
                 TextEffectMaterialType.ElectricAlternating => new Material(materialElectricAlternating),
-                TextEffectMaterialType.NoPlace => new Material(materialNoPlace),
                 _ => null
             };
         }

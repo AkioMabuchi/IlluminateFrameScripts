@@ -16,8 +16,11 @@ namespace ScriptableObjects
         [SerializeField] private Material materialElectricMinusIlluminate;
         [SerializeField] private Material materialElectricAlternatingIlluminate;
         [SerializeField] private Material materialElectricShorted;
+        [SerializeField] private Material materialElectricFatal;
 
-        public Material GetMaterialElectric(ElectricStatus electricStatus)
+        public Material None => materialElectricNone;
+        
+        public Material GetElectricMaterial(ElectricStatus electricStatus)
         {
             return electricStatus switch
             {
@@ -25,11 +28,28 @@ namespace ScriptableObjects
                 ElectricStatus.Plus => materialElectricPlus,
                 ElectricStatus.Minus => materialElectricMinus,
                 ElectricStatus.Alternating => materialElectricAlternating,
-                ElectricStatus.Shorted => materialElectricShorted,
-                ElectricStatus.NormalIlluminate => materialElectricNormalIlluminate,
-                ElectricStatus.PlusIlluminate => materialElectricPlusIlluminate,
-                ElectricStatus.MinusIlluminate => materialElectricMinusIlluminate,
-                ElectricStatus.AlternatingIlluminate => materialElectricAlternatingIlluminate,
+                _ => materialElectricNone
+            };
+        }
+
+        public Material GetIlluminatedMaterial(ElectricStatus electricStatus)
+        {
+            return electricStatus switch
+            {
+                ElectricStatus.Normal => materialElectricNormalIlluminate,
+                ElectricStatus.Plus => materialElectricPlusIlluminate,
+                ElectricStatus.Minus => materialElectricMinusIlluminate,
+                ElectricStatus.Alternating => materialElectricAlternatingIlluminate,
+                _ => materialElectricNone
+            };
+        }
+
+        public Material GetShortedMaterial(ShortedStatus shortedStatus)
+        {
+            return shortedStatus switch
+            {
+                ShortedStatus.Shorted => materialElectricShorted,
+                ShortedStatus.Fatal => materialElectricFatal,
                 _ => materialElectricNone
             };
         }
